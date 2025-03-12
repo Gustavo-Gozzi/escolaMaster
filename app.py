@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
@@ -24,13 +24,9 @@ def getAlunos():
 
 @app.route('/alunos', methods=["POST"])
 def postAluno():
-    novo_aluno = {
-        "id": 2,
-        "nome": "Frodo"
-    }
-    
-    dados = dicionario["Alunos"]
-    dados.append(novo_aluno)
+    dados = request.json
+    alunos = dicionario["Alunos"]
+    alunos.append(dados)
     return jsonify(dados)
     
 
