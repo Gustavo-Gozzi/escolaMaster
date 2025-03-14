@@ -25,11 +25,21 @@ def getAlunos():
     return jsonify(dados)
 
 @app.route('/alunos', methods=["POST"])
-def postAluno():
+def postAlunos():
     dados = request.json
     alunos = dicionario["Alunos"]
     alunos.append(dados)
     return jsonify(dados)
+
+@app.route('/alunos/<int:idAluno>', methods=["PUT"])
+def putAlunos(idAluno):
+    alunos = dicionario["Alunos"]
+    for aluno in alunos:
+        if aluno['id'] == idAluno:
+            resposta = request.json
+            aluno['nome'] = resposta['nome']
+            return jsonify(resposta)
+    return jsonify("Id do aluno não encontrado")
 
 # Seção Professores
 
