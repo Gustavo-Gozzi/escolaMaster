@@ -17,6 +17,8 @@ dicionario = {
     ]
 }
 
+# Seção Alunos
+
 @app.route('/alunos', methods=['GET'])
 def getAlunos():
     dados = dicionario["Alunos"]
@@ -29,17 +31,19 @@ def postAluno():
     alunos.append(dados)
     return jsonify(dados)
 
+# Seção Professores
+
 @app.route('/professores', methods=['GET'])
 def getProfessores():
     dados = dicionario["Professores"]
     return jsonify(dados)
 
-#@app.route('/alunos', methods=["POST"])
-#def postAluno():
-#    dados = request.json
-#    alunos = dicionario["Alunos"]
-#    alunos.append(dados)
-#    return jsonify(dados)
+@app.route('/professores', methods=["POST"])
+def postProfessores():
+    dados = request.json
+    alunos = dicionario["Professores"]
+    alunos.append(dados)
+    return jsonify(dados)
 
 if __name__ == '__main__':
     app.run(debug=True)
