@@ -8,6 +8,8 @@ dicionario = {
         {
             "id": 1,
             "nome": "Joao",
+            "idade": 0,
+            "data_nascimento": "",
             "nota_primeiro_semestre": 0,
             "nota_segundo_semestre": 0,
             "turma_id": 0
@@ -53,6 +55,18 @@ def putAlunos(idAluno):
             aluno['nome'] = resposta['nome']
             return jsonify(resposta)
     return jsonify("Id do aluno não encontrado")
+
+@app.route('/alunos/<int:idAluno>', methods=["DELETE"])
+def deleteAlunos(idAluno):
+    alunos = dicionario["Alunos"]
+    for aluno in alunos:                #percorre o Array Alunos 
+        if aluno["id"] == idAluno:      #compara os IDs
+            resposta = request.json     
+            alunos.remove(aluno)        #Remore o objeto do array
+            return jsonify(resposta)
+    else:
+        return jsonify("Aluno não encontrado...")
+
 
 # Seção Professores
 
