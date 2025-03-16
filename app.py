@@ -18,7 +18,11 @@ dicionario = {
     "Professores": [
         {
             "id": 1,
-            "nome": "Caio"
+            "nome": "Caio",
+            "idade": 0,
+            "data_nascimento": "2000-03-16",
+            "disciplina": "API",
+            "salario": 5000
         }
     ]
 }
@@ -93,6 +97,17 @@ def postProfessores():
     alunos = dicionario["Professores"]
     alunos.append(dados)
     return jsonify(dados)
+
+@app.route('/professores/<int:idProfessor>', methods=["DELETE"])
+def deleteProfessores(idProfessor):
+    professores = dicionario["Professores"]      #Resgata a lista de dicionarios professores
+    for professor in professores:                #percorre o Array professores 
+        if professor["id"] == idProfessor:      #compara os IDs
+            resposta = request.json     
+            professores.remove(professor)        #Remore o objeto do array
+            return jsonify(resposta)
+    else:
+        return jsonify("Professor não encontrado...")
 
 
 #funcoes
