@@ -83,7 +83,6 @@ def deleteAlunos(idAluno):
     else:
         return jsonify("Aluno não encontrado...")
 
-
 # Seção Professores
 
 @app.route('/professores', methods=['GET'])
@@ -94,8 +93,13 @@ def getProfessores():
 @app.route('/professores', methods=["POST"])
 def postProfessores():
     dados = request.json
-    alunos = dicionario["Professores"]
-    alunos.append(dados)
+    professores = dicionario["Professores"]
+
+    dt_nascimento = dados["data_nascimento"] # Retorna a data de Nascimento fornecida
+    idade = calcula_idade(dt_nascimento)     # Chama a função de Calcular Idade
+    dados["idade"] = idade                   # Adiciona a chave 'Idade' junto com o valor retornado da função
+
+    professores.append(dados)
     return jsonify(dados)
 
 @app.route('/professores/<int:idProfessor>', methods=["DELETE"])
