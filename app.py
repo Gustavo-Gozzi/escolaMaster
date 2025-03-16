@@ -9,7 +9,7 @@ dicionario = {
             "id": 1,
             "nome": "Joao",
             "idade": 0,
-            "data_nascimento": "",
+            "data_nascimento": "2004-08-29",
             "nota_primeiro_semestre": 0,
             "nota_segundo_semestre": 0,
             "turma_id": 0
@@ -52,7 +52,19 @@ def putAlunos(idAluno):
     for aluno in alunos:
         if aluno['id'] == idAluno:
             resposta = request.json
-            aluno['nome'] = resposta['nome']
+            if aluno['nome'] != resposta['nome']: aluno['nome'] = resposta['nome'] #Se for diferente muda, se não segue
+            if aluno['data_nascimento'] != resposta['data_nascimento']:
+                aluno['data_nascimento'] = resposta['data_nascimento']
+                dt_nascimento = resposta["data_nascimento"] # Retorna a data de Nascimento fornecida
+                idade = calcula_idade(dt_nascimento)     # Chama a função de Calcular Idade
+                aluno["idade"] = idade                   # Adiciona a chave 'Idade' junto com o valor retornado da função
+            if aluno['nota_primeiro_semestre'] != resposta["nota_primeiro_semestre"] or aluno['nota_segundo_semestre'] != resposta['nota_segundo_semestre']:
+                aluno["nota_primeiro_semestre"] = resposta["nota_primeiro_semestre"]
+                aluno["nota_segundo_semestre"] = resposta["nota_segundo_semestre"]
+                nota1 = resposta["nota_primeiro_semestre"]  #Retorna a primeira nota
+                nota2 = resposta["nota_segundo_semestre"]   #Retorna a segunda nota
+                aluno["media_final"] = media(nota1, nota2) #Atribui a chave 'media_final' o retorno da função
+            
             return jsonify(resposta)
     return jsonify("Id do aluno não encontrado")
 
@@ -85,10 +97,10 @@ def postProfessores():
 
 #funcoes
 def calcula_idade(data):   
-    data = data.split("/")  #Transforma o dado recebido em lista usando '/' como separador
-    ano = int(data[2])      #A lisa ficará assim: ["29", "07", "2003"]
+    data = data.split("-")  #Transforma o dado recebido em lista usando '-' como separador
+    ano = int(data[0])      #A lisa ficará assim: ["29", "07", "2003"]
     mes = int(data[1])      #Então cada variavel (ano, mes e dia) receberão seu valor exato de acordo
-    dia = int(data[0])      #com o index
+    dia = int(data[2])      #com o index
     data_nascimento = datetime.date(ano, mes, dia) #necessário importação da bibli 'datetime'
     hoje = datetime.date.today()
     idade = hoje - data_nascimento
@@ -98,7 +110,6 @@ def calcula_idade(data):
 def media(nota1, nota2):
     soma = nota1 + nota2
     return soma / 2
-
 
 if __name__ == '__main__':
     app.run(debug=True)
