@@ -113,6 +113,15 @@ def getProfessores():
     dados = dicionario["Professores"]
     return jsonify(dados)
 
+@app.route('/professores/<int:idProfessor>', methods=['GET'])
+def getProfessoresByID(idProfessor):
+    professores = dicionario["Professores"] #Adiciona o Array de professores a variavel
+    for professor in professores:           #Percorre essa lista
+        if professor["id"] == idProfessor:  #Se o ID escolhido estiver entre os IDs de professores então
+            return jsonify(professor)       #Todo o objeto será retornado
+    else:
+        return jsonify("Professor não encontrado.") #Senão, não!
+
 @app.route('/professores', methods=["POST"])
 def postProfessores():
     dados = request.json
