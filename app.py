@@ -24,6 +24,20 @@ dicionario = {
             "disciplina": "API",
             "salario": 5000
         }
+    ],
+    "Turma": [
+        {
+            "id": 1,
+            "nome": "API",
+            "turno": "Noturno",
+            "professor_id": 1
+        },
+        {
+            "id": 2,
+            "nome": "MOBILE",
+            "turno": "Noturno",
+            "professor_id": 2
+        }
     ]
 }
 
@@ -122,6 +136,20 @@ def deleteProfessores(idProfessor):
     else:
         return jsonify("Professor não encontrado...")
 
+# Seção de Turma:
+
+@app.route('/turmas', methods=["GET"])
+def getTurmas():
+    turmas = dicionario["Turma"]
+    return jsonify(turmas)
+
+@app.route('/turmas/<int:idTurma>', methods=["GET"])
+def getTurmasbyID(idTurma):
+    turmas = dicionario["Turma"]
+    for turma in turmas:
+        if turma["id"] == idTurma:
+            return jsonify(turma)
+    return jsonify("Turma não encontrada!")
 
 #funcoes
 def calcula_idade(data):   
