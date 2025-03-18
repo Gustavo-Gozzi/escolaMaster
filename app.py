@@ -41,6 +41,16 @@ dicionario = {
     ]
 }
 
+# Seção Reseta
+
+@app.route('/reseta', methods=['POST'])
+def reseta():
+    dados = dicionario
+    dicionario["Alunos"].clear()
+    dicionario["Turma"].clear()
+    dicionario["Professores"].clear()
+    return jsonify(dados)
+
 # Seção Alunos
 
 @app.route('/alunos', methods=['GET'])
