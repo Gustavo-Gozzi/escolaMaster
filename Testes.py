@@ -24,24 +24,8 @@ class TestStringMethods(unittest.TestCase):
 
     def test_001_adiciona_alunos(self):
         #criar dois alunos (usando post na url /alunos)
-        r = requests.post('http://localhost:5000/alunos',json={
-            "id": 0,
-            "nome": "fernando",
-            "idade": 0,
-            "data_nascimento": "2004-08-29",
-            "nota_primeiro_semestre": 0,
-            "nota_segundo_semestre": 0,
-            "turma_id": 0
-        })
-        r = requests.post('http://localhost:5000/alunos',json={
-            "id": 1,
-            "nome": "roberto",
-            "idade": 0,
-            "data_nascimento": "2004-08-29",
-            "nota_primeiro_semestre": 0,
-            "nota_segundo_semestre": 0,
-            "turma_id": 0
-        })
+        r = requests.post('http://localhost:5000/alunos',json={"id": 0,"nome": "fernando","idade": 0,"data_nascimento": "2004-08-29","nota_primeiro_semestre": 0,"nota_segundo_semestre": 0,"turma_id": 0})
+        r = requests.post('http://localhost:5000/alunos',json={"id": 1,"nome": "roberto","idade": 0,"data_nascimento": "2004-08-29","nota_primeiro_semestre": 0,"nota_segundo_semestre": 0,"turma_id": 0})
         
         #pego a lista de alunos (do mesmo jeito que no teste 0)
         r_lista = requests.get('http://localhost:5000/alunos')
@@ -66,16 +50,7 @@ class TestStringMethods(unittest.TestCase):
 
     def test_002_aluno_por_id(self):
         #cria um aluno 'mario', com id 20
-        r = requests.post('http://localhost:5000/alunos',
-            json={
-            "id": 20,
-            "nome": "mario",
-            "idade": 0,
-            "data_nascimento": "2004-08-29",
-            "nota_primeiro_semestre": 0,
-            "nota_segundo_semestre": 0,
-            "turma_id": 0
-        })
+        r = requests.post('http://localhost:5000/alunos',json={"id": 20,"nome": "mario","idade": 0,"data_nascimento": "2004-08-29","nota_primeiro_semestre": 0,"nota_segundo_semestre": 0,"turma_id": 0})
 
         #consulta a url /alunos/20, pra ver se o aluno está lá
         resposta = requests.get('http://localhost:5000/alunos/20')
@@ -93,16 +68,7 @@ class TestStringMethods(unittest.TestCase):
     #e o aluno deve desaparecer
     def test_003_reseta(self):
         #criei um aluno, com post
-        r = requests.post('http://localhost:5000/alunos',
-            json={
-            "id": 29,
-            "nome": "cicero",
-            "idade": 0,
-            "data_nascimento": "2004-08-29",
-            "nota_primeiro_semestre": 0,
-            "nota_segundo_semestre": 0,
-            "turma_id": 0
-        })
+        r = requests.post('http://localhost:5000/alunos', json={"id": 29,"nome": "cicero","idade": 0,"data_nascimento": "2004-08-29","nota_primeiro_semestre": 0,"nota_segundo_semestre": 0,"turma_id": 0})
         #peguei a lista
         r_lista = requests.get('http://localhost:5000/alunos')
         #no momento, a lista tem que ter mais de um aluno
@@ -123,24 +89,14 @@ class TestStringMethods(unittest.TestCase):
 
     #esse teste adiciona 2 alunos, depois deleta 1
     #e verifica que o numero de alunos realmente diminuiu
-    '''
-    voce provavelmente vai querer usar o lista.remove
-    >>> lista
-    [10, 20, 'banana']
-    >>> lista.remove('banana')
-    >>> lista
-    [10, 20]
-    >>> lista.remove(10)
-    >>> lista
-    [20]'''
     def test_004_deleta(self):
         #apago tudo
         r_reset = requests.post('http://localhost:5000/reseta')
         self.assertEqual(r_reset.status_code,200)
         #crio 3 alunos
-        requests.post('http://localhost:5000/alunos',json={'nome':'cicero','id':29})
-        requests.post('http://localhost:5000/alunos',json={'nome':'lucas','id':28})
-        requests.post('http://localhost:5000/alunos',json={'nome':'marta','id':27})
+        requests.post('http://localhost:5000/alunos',json={"id": 29,"nome": "cicero","idade": 0,"data_nascimento": "2004-08-29","nota_primeiro_semestre": 0,"nota_segundo_semestre": 0,"turma_id": 0})
+        requests.post('http://localhost:5000/alunos',json={"id": 28,"nome": "lucas","idade": 0,"data_nascimento": "2004-08-29","nota_primeiro_semestre": 0,"nota_segundo_semestre": 0,"turma_id": 0})
+        requests.post('http://localhost:5000/alunos',json={"id": 27,"nome": "marta","idade": 0,"data_nascimento": "2004-08-29","nota_primeiro_semestre": 0,"nota_segundo_semestre": 0,"turma_id": 0})
         #pego a lista completa
         r_lista = requests.get('http://localhost:5000/alunos')
         lista_retornada = r_lista.json()
@@ -156,7 +112,7 @@ class TestStringMethods(unittest.TestCase):
 
         acheiMarta = False
         acheiCicero = False
-        for aluno in lista_retornada:
+        for aluno in lista_retornada2:
             if aluno['nome'] == 'marta':
                 acheiMarta=True
             if aluno['nome'] == 'cicero':
@@ -186,7 +142,7 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(r_reset.status_code,200)
 
         #criei um aluno
-        requests.post('http://localhost:5000/alunos',json={'nome':'lucas','id':28})
+        requests.post('http://localhost:5000/alunos',json={"id": 28,"nome": "lucas","idade": 0,"data_nascimento": "2004-08-29","nota_primeiro_semestre": 0,"nota_segundo_semestre": 0,"turma_id": 0})
         #e peguei o dicionario dele
         r_antes = requests.get('http://localhost:5000/alunos/28')
         #o nome enviado foi lucas, o nome recebido tb
@@ -215,7 +171,7 @@ class TestStringMethods(unittest.TestCase):
         self.assertIn(r.status_code,[400,404])
         #qual a resposta que a linha abaixo pede?
         #um json, com o dicionario {"erro":"aluno nao encontrado"}
-        self.assertEqual(r.json()['erro'],'aluno nao encontrado')
+        self.assertEqual(r.json()['erro'],"Aluno não encontrado")
     
 
     def test_006b_id_inexistente_no_get(self):
@@ -227,7 +183,7 @@ class TestStringMethods(unittest.TestCase):
         r = requests.get('http://localhost:5000/alunos/15')
         self.assertIn(r.status_code,[400,404])
         #olhando pra essa linha debaixo, o que está especificado que o servidor deve retornar
-        self.assertEqual(r.json()['erro'],'aluno nao encontrado')
+        self.assertEqual(r.json()['erro'],"Aluno não encontrado")
         #                ------
         #                string json
         #                ----------------
@@ -243,7 +199,7 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(r_reset.status_code,200)
         r = requests.delete('http://localhost:5000/alunos/15')
         self.assertIn(r.status_code,[400,404])
-        self.assertEqual(r.json()['erro'],'aluno nao encontrado')
+        self.assertEqual(r.json()['erro'],"Aluno não encontrado")
 
         #404 usuário tentou acessar um recurso inexistente
         #400 usuário fez alguma besteira
@@ -260,14 +216,14 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(r_reset.status_code,200)
 
         #crio o usuario bond e confiro
-        r = requests.post('http://localhost:5000/alunos',json={'nome':'bond','id':7})
+        r = requests.post('http://localhost:5000/alunos',json={"id": 7,"nome": "James","idade": 0,"data_nascimento": "2004-08-29","nota_primeiro_semestre": 0,"nota_segundo_semestre": 0,"turma_id": 0})
         self.assertEqual(r.status_code,200)
 
         #tento usar o mesmo id para outro usuário
-        r = requests.post('http://localhost:5000/alunos',json={'nome':'james','id':7})
+        r = requests.post('http://localhost:5000/alunos',json={"id": 7,"nome": "Bond","idade": 0,"data_nascimento": "2004-08-29","nota_primeiro_semestre": 0,"nota_segundo_semestre": 0,"turma_id": 0})
         # o erro é muito parecido com o do teste anterior
         self.assertEqual(r.status_code,400)
-        self.assertEqual(r.json()['erro'],'id ja utilizada')
+        self.assertEqual(r.json()['erro'],'id já utilizada')
 
 
     #cria alunos sem nome, o que tem que dar erro
@@ -276,7 +232,7 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(r_reset.status_code,200)
 
         #tentei criar um aluno, sem enviar um nome
-        r = requests.post('http://localhost:5000/alunos',json={'id':8})
+        r = requests.post('http://localhost:5000/alunos',json={"id": 8,"idade": 0,"data_nascimento": "2004-08-29","nota_primeiro_semestre": 0,"nota_segundo_semestre": 0,"turma_id": 0})
         self.assertEqual(r.status_code,400)
         self.assertEqual(r.json()['erro'],'aluno sem nome')
     
@@ -287,7 +243,7 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(r_reset.status_code,200)
 
         #criei um aluno sem problemas
-        r = requests.post('http://localhost:5000/alunos',json={'nome':'maximus','id':7})
+        r = requests.post('http://localhost:5000/alunos',json={"id": 7,"nome": "maximus","idade": 0,"data_nascimento": "2004-08-29","nota_primeiro_semestre": 0,"nota_segundo_semestre": 0,"turma_id": 0})
         self.assertEqual(r.status_code,200)
 
         #mas tentei editar ele sem mandar o nome

@@ -6,7 +6,7 @@ app = Flask(__name__)
 dicionario = {
     "Alunos": [
         {
-            "id": 1,
+            "id": 100,
             "nome": "Joao",
             "idade": 0,
             "data_nascimento": "2004-08-29",
@@ -64,13 +64,21 @@ def getAlunosbyID(idAluno):
     for aluno in alunos:
         if aluno["id"] == idAluno:
             return jsonify(aluno)
-    return jsonify("Aluno não encontrado!")
+    return jsonify({"erro": "Aluno não encontrado"}),404
 
 
 @app.route('/alunos', methods=["POST"])
 def postAlunos():
     dados = request.json
     alunos = dicionario["Alunos"]
+    
+    #Verifica se já tem um aluno na
+    for aluno in alunos:
+        if aluno["id"] == dados["id"]:
+            return jsonify({"erro": "id já utilizada"}),400 
+
+    if "nome" not in dados:
+        return jsonify({"erro": "aluno sem nome"}),400 
 
     dt_nascimento = dados["data_nascimento"] # Retorna a data de Nascimento fornecida
     idade = calcula_idade(dt_nascimento)     # Chama a função de Calcular Idade
@@ -89,6 +97,10 @@ def putAlunos(idAluno):
     for aluno in alunos:
         if aluno['id'] == idAluno:
             resposta = request.json
+
+            if "nome" not in resposta:
+                    return jsonify({"erro": "aluno sem nome"}),400 
+
             if aluno['nome'] != resposta['nome']: 
                 aluno['nome'] = resposta['nome'] #Se for diferente muda, se não segue
             if aluno['data_nascimento'] != resposta['data_nascimento']:
@@ -104,18 +116,17 @@ def putAlunos(idAluno):
                 aluno["media_final"] = media(nota1, nota2) #Atribui a chave 'media_final' o retorno da função
             
             return jsonify(resposta)
-    return jsonify("Id do aluno não encontrado")
+    return jsonify({"erro": "Aluno não encontrado"}),404
 
 @app.route('/alunos/<int:idAluno>', methods=["DELETE"])
 def deleteAlunos(idAluno):
     alunos = dicionario["Alunos"]
     for aluno in alunos:                #percorre o Array Alunos 
         if aluno["id"] == idAluno:      #compara os IDs
-            resposta = request.json     
             alunos.remove(aluno)        #Remore o objeto do array
-            return jsonify(resposta)
+            return jsonify(aluno)
     else:
-        return jsonify("Aluno não encontrado...")
+        return jsonify({"erro": "Aluno não encontrado"}),404
 
 # Seção Professores
 
