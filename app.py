@@ -50,7 +50,7 @@ def getAlunos():
 
 @app.route('/alunos/<int:idAluno>', methods=['GET'])
 def getAlunosbyID(idAluno):
-    alunos = dicionario["Alunos"]
+    alunos = dicionario["Alunos"] #-> Array JSONs
     for aluno in alunos:
         if aluno["id"] == idAluno:
             return jsonify(aluno)
@@ -79,7 +79,8 @@ def putAlunos(idAluno):
     for aluno in alunos:
         if aluno['id'] == idAluno:
             resposta = request.json
-            if aluno['nome'] != resposta['nome']: aluno['nome'] = resposta['nome'] #Se for diferente muda, se não segue
+            if aluno['nome'] != resposta['nome']: 
+                aluno['nome'] = resposta['nome'] #Se for diferente muda, se não segue
             if aluno['data_nascimento'] != resposta['data_nascimento']:
                 aluno['data_nascimento'] = resposta['data_nascimento']
                 dt_nascimento = resposta["data_nascimento"] # Retorna a data de Nascimento fornecida
@@ -133,6 +134,30 @@ def postProfessores():
 
     professores.append(dados)
     return jsonify(dados)
+
+@app.route('/professores/<int:idProfessor>', methods=['PUT'])
+def putProfessores(idProfessor):
+    professores = dicionario["Professores"]
+    for professor in professores:
+        if professor["id"] == idProfessor:
+            resposta = request.json
+            if professor['nome'] != resposta['nome']:
+                professor['nome'] = resposta['nome']
+            if professor['data_nascimento'] != resposta['data_nascimento']:
+                professor['data_nascimento'] = resposta['data_nascimento']
+                dt_nascimento = resposta["data_nascimento"] 
+                idade = calcula_idade(dt_nascimento)
+                professor["idade"] = idade
+            if professor['disciplina'] != resposta['disciplina']:
+                professor['disciplina'] = resposta['disciplina']
+            if professor['salario'] != resposta['salario']:
+                professor['salario'] = resposta['salario']
+            return jsonify(resposta)
+    return jsonify("Professor não encontrado...")
+            
+            
+
+
 
 @app.route('/professores/<int:idProfessor>', methods=["DELETE"])
 def deleteProfessores(idProfessor):
