@@ -142,12 +142,20 @@ def getProfessoresByID(idProfessor):
         if professor["id"] == idProfessor:  #Se o ID escolhido estiver entre os IDs de professores então
             return jsonify(professor)       #Todo o objeto será retornado
     else:
-        return jsonify("Professor não encontrado.") #Senão, não!
+        return jsonify({"erro": "Professor não encontrado"}),400
 
 @app.route('/professores', methods=["POST"])
 def postProfessores():
     dados = request.json
     professores = dicionario["Professores"]
+
+    #Verifica se já tem um professor com o id
+    for professor in professores:
+        if professor["id"] == dados["id"]:
+            return jsonify({"erro": "id já utilizada"}),400 
+    
+    if "nome" not in dados:
+        return jsonify({"erro": "professor sem nome"}),400 
 
     dt_nascimento = dados["data_nascimento"] # Retorna a data de Nascimento fornecida
     idade = calcula_idade(dt_nascimento)     # Chama a função de Calcular Idade
@@ -162,6 +170,10 @@ def putProfessores(idProfessor):
     for professor in professores:
         if professor["id"] == idProfessor:
             resposta = request.json
+
+            if "nome" not in resposta:
+                return jsonify({"erro": "professor sem nome"}),400 
+
             if professor['nome'] != resposta['nome']:
                 professor['nome'] = resposta['nome']
             if professor['data_nascimento'] != resposta['data_nascimento']:
@@ -174,18 +186,17 @@ def putProfessores(idProfessor):
             if professor['salario'] != resposta['salario']:
                 professor['salario'] = resposta['salario']
             return jsonify(resposta)
-    return jsonify("Professor não encontrado...")
+    return jsonify({"erro": "Professor não encontrado"}),400
             
 @app.route('/professores/<int:idProfessor>', methods=["DELETE"])
 def deleteProfessores(idProfessor):
     professores = dicionario["Professores"]      #Resgata a lista de dicionarios professores
     for professor in professores:                #percorre o Array professores 
         if professor["id"] == idProfessor:      #compara os IDs
-            resposta = request.json     
             professores.remove(professor)        #Remore o objeto do array
             return jsonify(resposta)
     else:
-        return jsonify("Professor não encontrado...")
+        return jsonify({"erro": "Professor não encontrado"}),400
 
 # Seção de Turma:
 
@@ -234,7 +245,6 @@ def deleteTurma(idTurma):
     turmas = dicionario["Turma"]      #Resgata a lista de dicionarios turmas
     for turma in turmas:                #percorre o Array turmas 
         if turma["id"] == idTurma:      #compara os IDs
-            resposta = request.json     
             turmas.remove(turma)        #Remore o objeto do array
             return jsonify(resposta)
     else:
