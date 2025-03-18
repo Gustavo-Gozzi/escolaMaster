@@ -185,6 +185,34 @@ def getTurmasbyID(idTurma):
             return jsonify(turma)
     return jsonify("Turma não encontrada!")
 
+@app.route('/turmas', methods=["POST"])
+def postTurmas():
+    dados = request.json
+    turma = dicionario["Turma"]
+    
+    turma.append(dados)
+    return jsonify(dados)
+
+
+@app.route('/turmas/<int:idTurma>', methods=['PUT'])
+def putTurma(idTurma):
+    turmas = dicionario["Turma"]
+    for turma in turmas:
+        if turma["id"] == idTurma:
+            resposta = request.json
+            if turma["nome"] != resposta["nome"]:
+                turma["nome"] = resposta["nome"]
+
+            if turma["turno"] != resposta["turno"]:
+                turma["turno"] = resposta["turno"]
+
+            if turma["professor_id"] != resposta["professor_id"]:
+                turma["professor_id"] = resposta["professor_id"]
+
+            return jsonify(resposta)
+    return jsonify("Turma não encontrada...")
+
+
 #funcoes
 def calcula_idade(data):   
     data = data.split("-")  #Transforma o dado recebido em lista usando '-' como separador
