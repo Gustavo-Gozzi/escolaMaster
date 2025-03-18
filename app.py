@@ -155,10 +155,6 @@ def putProfessores(idProfessor):
             return jsonify(resposta)
     return jsonify("Professor não encontrado...")
             
-            
-
-
-
 @app.route('/professores/<int:idProfessor>', methods=["DELETE"])
 def deleteProfessores(idProfessor):
     professores = dicionario["Professores"]      #Resgata a lista de dicionarios professores
@@ -211,6 +207,17 @@ def putTurma(idTurma):
 
             return jsonify(resposta)
     return jsonify("Turma não encontrada...")
+
+@app.route('/turmas/<int:idTurma>', methods=["DELETE"])
+def deleteTurma(idTurma):
+    turmas = dicionario["Turma"]      #Resgata a lista de dicionarios turmas
+    for turma in turmas:                #percorre o Array turmas 
+        if turma["id"] == idTurma:      #compara os IDs
+            resposta = request.json     
+            turmas.remove(turma)        #Remore o objeto do array
+            return jsonify(resposta)
+    else:
+        return jsonify("Turma não encontrada...")
 
 
 #funcoes
