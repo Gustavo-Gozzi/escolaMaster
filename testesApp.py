@@ -2,7 +2,7 @@ import requests
 import unittest
 
 class TestStringMethods(unittest.TestCase):
-    #Testango GET
+    #Testando GET
     def test_001_GET_alunos(self):
         r = requests.get('http://localhost:5000/alunos')
 
