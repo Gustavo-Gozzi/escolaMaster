@@ -91,6 +91,8 @@ def postAlunos():
     if empty("Turma"):
         return jsonify("Não há turmas criadas, impossível de registrar alunos."),400
     dados = request.json
+    if not "nota_primeiro_semestre" in dados or not "nota_segundo_semestre" in dados:
+        return jsonify("É necessário incluir as notas para adicionar um aluno."),400
     alunos = dicionario["Alunos"]
     turmas = dicionario["Turma"]
     if not "data_nascimento" in dados:
