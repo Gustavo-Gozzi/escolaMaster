@@ -2,6 +2,7 @@ import requests
 import unittest
 
 class TestStringMethods(unittest.TestCase):
+    """
     def test_000_alunos_retorna_lista(self):
         #pega a url /alunos, com o verbo get
         r = requests.get('http://localhost:5000/alunos')
@@ -353,6 +354,120 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(r.json()['erro'],'professor sem nome')
 
     def test_109_nao_confundir_professor_e_aluno(self):
+        r_reset = requests.post('http://localhost:5000/reseta')
+        r = requests.post('http://localhost:5000/professores',json={"id": 1,"nome": "fernando","idade": 0,"data_nascimento": "2004-08-29","disciplina": "API","salario": 5000})
+        self.assertEqual(r.status_code,200)
+        r = requests.post('http://localhost:5000/professores',json={"id": 2,"nome": "roberto","idade": 0,"data_nascimento": "2004-08-29","disciplina": "API","salario": 5000})
+        self.assertEqual(r.status_code,200)
+        r_lista = requests.get('http://localhost:5000/professores')
+        self.assertEqual(len(r_lista.json()),2)
+        r_lista_alunos = requests.get('http://localhost:5000/alunos')
+        self.assertEqual(len(r_lista_alunos.json()),0)
+    
+    def test_200_turma_retorna_lista(self):
+        r = requests.get('http://localhost:5000/turmas')
+        self.assertEqual(type(r.json()),type([]))
+    
+    '''def test_100b_nao_confundir_professor_e_aluno(self):
+        r_reset = requests.post('http://localhost:5000/reseta')
+        r = requests.post('http://localhost:5000/alunos',json={"id": 0,"nome": "fernando","idade": 0,"data_nascimento": "2004-08-29","nota_primeiro_semestre": 0,"nota_segundo_semestre": 0,"turma_id": 0})
+        self.assertEqual(r.status_code,200)
+        r = requests.post('http://localhost:5000/alunos',json={"id": 1,"nome": "roberto","idade": 0,"data_nascimento": "2004-08-29","nota_primeiro_semestre": 0,"nota_segundo_semestre": 0,"turma_id": 0})
+        self.assertEqual(r.status_code,200)
+        r_lista = requests.get('http://localhost:5000/professores')
+        self.assertEqual(len(r_lista.json()),0)
+        r_lista_alunos = requests.get('http://localhost:5000/alunos')
+        self.assertEqual(len(r_lista_alunos.json()),2)'''
+
+    def test_201_adiciona_turma(self):
+        r_reset = requests.post('http://localhost:5000/reseta')
+        self.assertEqual(r_reset.status_code,200)
+
+        r = requests.post('http://localhost:5000/turmas',json={"id": 1,"nome": "API","turno": "Noturno","professor_id": 2})
+        r = requests.post('http://localhost:5000/turmas',json={"id": 2,"nome": "MOBILE","turno": "Noturno","professor_id": 2})
+        r_lista = requests.get('http://localhost:5000/turmas')
+        achei_API = False
+        achei_Mobile = False
+        for turma in r_lista.json():
+            if turma['nome'] == 'API':
+                achei_API = True
+            if turma['nome'] == 'MOBILE':
+                achei_Mobile = True
+        if not achei_API:
+            self.fail('Turma API nao apareceu na lista de turmas')
+        if not achei_Mobile:
+            self.fail('Turma MOBILE nao apareceu na lista de turmas')
+
+    def test_202_turma_por_id(self):
+        r = requests.post('http://localhost:5000/turmas',json={"id": 1,"nome": "API","turno": "Noturno","professor_id": 2})
+        r_lista = requests.get('http://localhost:5000/turmas/1')
+        self.assertEqual(r_lista.json()['nome'],'API')
+    
+    def test_203_adiciona_e_reseta_turma(self):
+        r = requests.post('http://localhost:5000/turmas ',json={"id": 1,"nome": "API","turno": "Noturno","professor_id": 2})
+        r_lista = requests.get('http://localhost:5000/turmas')
+        self.assertTrue(len(r_lista.json()) > 0)
+        r_reset = requests.post('http://localhost:5000/reseta')
+        self.assertEqual(r_reset.status_code,200)
+        r_lista_depois = requests.get('http://localhost:5000/turmas')
+        self.assertEqual(len(r_lista_depois.json()),0)
+    """
+    def test_204_deleta(self):
+        r_reset = requests.post('http://localhost:5000/reseta')
+        self.assertEqual(r_reset.status_code,200)
+        requests.post('http://localhost:5000/turmas',json={"id": 1,"nome": "API","turno": "Noturno","professor_id": 2})
+        requests.post('http://localhost:5000/turmas',json={"id": 2,"nome": "MOBILE","turno": "Noturno","professor_id": 2})
+        r_lista = requests.get('http://localhost:5000/turmas')
+        self.assertEqual(len(r_lista.json()),2)
+        requests.delete('http://localhost:5000/turmas/2')
+        r_lista = requests.get('http://localhost:5000/turmas')
+        self.assertEqual(len(r_lista.json()),1)
+       
+    def test_205_edita(self):
+        r_reset = requests.post('http://localhost:5000/reseta')
+        self.assertEqual(r_reset.status_code,200)
+        requests.post('http://localhost:5000/professores',json={"id": 28,"nome": "lucas","idade": 0,"data_nascimento": "2004-08-29","disciplina": "API","salario": 5000})
+        r_antes = requests.get('http://localhost:5000/professores/28')
+        self.assertEqual(r_antes.json()['nome'],'lucas')
+        requests.put('http://localhost:5000/professores/28', json={'nome':'lucas mendes'})
+        r_depois = requests.get('http://localhost:5000/professores/28')
+        self.assertEqual(r_depois.json()['nome'],'lucas mendes')
+    
+    def test_206_id_inexistente(self):
+            r_reset = requests.post('http://localhost:5000/reseta')
+            self.assertEqual(r_reset.status_code,200)
+            r = requests.put('http://localhost:5000/professores/15',json={"id": 15,"nome": "bowser","idade": 0,"data_nascimento": "2004-08-29","disciplina": "API","salario": 5000})
+            self.assertEqual(r.status_code,400)
+            self.assertEqual(r.json()['erro'],'Professor não encontrado')
+            r = requests.get('http://localhost:5000/professores/15')
+            self.assertEqual(r.status_code,400)
+            self.assertEqual(r.json()['erro'],'Professor não encontrado')
+            r = requests.delete('http://localhost:5000/professores/15')
+            self.assertEqual(r.status_code,400)
+            self.assertEqual(r.json()['erro'],'Professor não encontrado')
+    
+    def test_207_criar_com_id_ja_existente(self):
+        r_reset = requests.post('http://localhost:5000/reseta')
+        self.assertEqual(r_reset.status_code,200)
+        r = requests.post('http://localhost:5000/professores',json={"id": 7,"nome": "James","idade": 0,"data_nascimento": "2004-08-29","disciplina": "API","salario": 5000})
+        self.assertEqual(r.status_code,200)
+        r = requests.post('http://localhost:5000/professores',json={"id": 7,"nome": "Bond","idade": 0,"data_nascimento": "2004-08-29","disciplina": "API","salario": 5000})
+        self.assertEqual(r.status_code,400)
+        self.assertEqual(r.json()['erro'],'id já utilizada')
+    
+    def test_208_post_ou_put_sem_nome(self):
+        r_reset = requests.post('http://localhost:5000/reseta')
+        self.assertEqual(r_reset.status_code,200)
+        r = requests.post('http://localhost:5000/professores',json={"id": 8,"idade": 0,"data_nascimento": "2004-08-29","disciplina": "API","salario": 5000})
+        self.assertEqual(r.status_code,400)
+        self.assertEqual(r.json()['erro'],'professor sem nome')
+        r = requests.post('http://localhost:5000/professores',json={"id": 7,"nome": "Maximus","idade": 0,"data_nascimento": "2004-08-29","disciplina": "API","salario": 5000})
+        self.assertEqual(r.status_code,200)
+        r = requests.put('http://localhost:5000/professores/7',json={'id':7})
+        self.assertEqual(r.status_code,400)
+        self.assertEqual(r.json()['erro'],'professor sem nome')
+
+    def test_209_nao_confundir_professor_e_aluno(self):
         r_reset = requests.post('http://localhost:5000/reseta')
         r = requests.post('http://localhost:5000/professores',json={"id": 1,"nome": "fernando","idade": 0,"data_nascimento": "2004-08-29","disciplina": "API","salario": 5000})
         self.assertEqual(r.status_code,200)

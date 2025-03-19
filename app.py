@@ -150,7 +150,7 @@ def postProfessores():
     professores = dicionario["Professores"]
 
     #Verifica se já tem um professor com o id
-    for professor in professores:
+    for professor in professores: 
         if professor["id"] == dados["id"]:
             return jsonify({"erro": "id já utilizada"}),400 
     
@@ -221,7 +221,6 @@ def postTurmas():
     turma.append(dados)
     return jsonify(dados)
 
-
 @app.route('/turmas/<int:idTurma>', methods=['PUT'])
 def putTurma(idTurma):
     turmas = dicionario["Turma"]
@@ -249,7 +248,6 @@ def deleteTurma(idTurma):
             return jsonify(resposta)
     else:
         return jsonify("Turma não encontrada...")
-
 
 #funcoes
 def calcula_idade(data):   
