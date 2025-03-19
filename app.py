@@ -41,6 +41,7 @@ dicionario = {
     ]
 }
 
+
 # Seção Reseta
 
 @app.route('/reseta', methods=['POST'])
@@ -69,6 +70,8 @@ def getAlunosbyID(idAluno):
 
 @app.route('/alunos', methods=["POST"])
 def postAlunos():
+    if empty("Turma"):
+        return jsonify("Não há turmas criadas, impossível de registrar alunos.")
     dados = request.json
     alunos = dicionario["Alunos"]
     
@@ -194,6 +197,7 @@ def deleteProfessores(idProfessor):
     for professor in professores:                #percorre o Array professores 
         if professor["id"] == idProfessor:      #compara os IDs
             professores.remove(professor)        #Remore o objeto do array
+            resposta = "Professor deletado com sucesso!"
             return jsonify(resposta)
     else:
         return jsonify({"erro": "Professor não encontrado"}),400
@@ -215,6 +219,8 @@ def getTurmasbyID(idTurma):
 
 @app.route('/turmas', methods=["POST"])
 def postTurmas():
+    if empty("Professores"):
+        return jsonify("Não é possível criar uma turma sem professores.")
     dados = request.json
     turma = dicionario["Turma"]
     
@@ -245,6 +251,7 @@ def deleteTurma(idTurma):
     for turma in turmas:                #percorre o Array turmas 
         if turma["id"] == idTurma:      #compara os IDs
             turmas.remove(turma)        #Remore o objeto do array
+            resposta = "Turma deletada com sucesso!"
             return jsonify(resposta)
     else:
         return jsonify("Turma não encontrada...")
@@ -264,6 +271,16 @@ def calcula_idade(data):
 def media(nota1, nota2):
     soma = nota1 + nota2
     return soma / 2
+
+def empty(texto):                       #Deve receber uma chave do nosso dicionario, ex: Turma
+    texto = texto.capitalize()          #Garante que a string recebida tenha a primeira letra maiuscula
+    if texto in dicionario:             #Verifica de a chave fornecida exite no dicionario.
+        if len(dicionario[texto]) > 0:  #Caso a chave exista, verifica se ela possui algum dado salvo, "tamanho > 0"
+            return False                #Se o tamanho da lista for maior que 0, então retorna falso "não está vazio"
+        else:                           
+            return True                 #Se for menor ou igual a zero, então a lista está vazia
+    else:
+        return False
 
 if __name__ == '__main__':
     app.run(debug=True)
