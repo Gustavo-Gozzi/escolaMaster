@@ -42,6 +42,21 @@ class TestStringMethods(unittest.TestCase):
 
     #Testando POST
     def test_004_POST_alunos(self):
+        requests.post("http://localhost:5000/reseta/alunos")
+        requests.post('http://localhost:5000/professores',json={
+            "id": 1,
+            "nome": "Caio",
+            "idade": 0,
+            "data_nascimento": "2000-03-16",
+            "disciplina": "API",
+            "salario": 5000
+        })
+        requests.post("http://localhost:5000/turmas", json={
+            "id": 100,
+            "nome": "API",
+            "turno": "Noturno",
+            "professor_id": 1
+        })
         r = requests.post('http://localhost:5000/alunos',json={
             "id": 1,
             "nome": "Joao",
@@ -76,6 +91,7 @@ class TestStringMethods(unittest.TestCase):
             self.fail('aluno Joao nao encontrado.')
         if not mikael:
             self.fail('aluno Mikael nao encontrado.')
+        
 
     def test_005_POST_professores(self):
         r = requests.post('http://localhost:5000/professores',json={
@@ -184,7 +200,15 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(dict_retornado['nome'],'Gandalf')
 
     def test_009_GETbyID_turmas(self):
-
+        requests.post("http://localhost:5000/reseta/professores")
+        requests.post('http://localhost:5000/professores',json={
+            "id": 100,
+            "nome": "Caio",
+            "idade": 0,
+            "data_nascimento": "2000-03-16",
+            "disciplina": "API",
+            "salario": 5000
+        })
         r = requests.post('http://localhost:5000/turmas',json={
             "id": 3,
             "nome": "Ressucitação",
