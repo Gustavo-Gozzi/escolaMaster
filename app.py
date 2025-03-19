@@ -41,6 +41,7 @@ dicionario = {
     ]
 }
 
+
 # Seção Reseta
 
 @app.route('/reseta', methods=['POST'])
@@ -251,7 +252,7 @@ def deleteTurma(idTurma):
     for turma in turmas:                #percorre o Array turmas 
         if turma["id"] == idTurma:      #compara os IDs
             turmas.remove(turma)        #Remore o objeto do array
-            resposta = "Turma deletado com sucesso!"
+            resposta = "Turma deletada com sucesso!"
             return jsonify(resposta)
     else:
         return jsonify("Turma não encontrada...")
