@@ -17,7 +17,7 @@ dicionario = {
     ],
     "Professores": [
         {
-            "id": 1,
+            "id": 100,
             "nome": "Caio",
             "idade": 0,
             "data_nascimento": "2000-03-16",
@@ -27,13 +27,13 @@ dicionario = {
     ],
     "Turma": [
         {
-            "id": 1,
+            "id": 100,
             "nome": "API",
             "turno": "Noturno",
             "professor_id": 1
         },
         {
-            "id": 2,
+            "id": 200,
             "nome": "MOBILE",
             "turno": "Noturno",
             "professor_id": 2
@@ -49,6 +49,24 @@ def reseta():
     dados = dicionario
     dicionario["Alunos"].clear()
     dicionario["Turma"].clear()
+    dicionario["Professores"].clear()
+    return jsonify(dados)
+    
+@app.route('/reseta/alunos', methods=['POST'])
+def resetaAlunos():
+    dados = dicionario["Alunos"]
+    dicionario["Alunos"].clear()
+    return jsonify(dados)
+
+@app.route('/reseta/turmas', methods=['POST'])
+def resetaTurmas():
+    dados = dicionario["Turma"]
+    dicionario["Turma"].clear()
+    return jsonify(dados)
+
+@app.route('/reseta/professores', methods=['POST'])
+def resetaPRofessores():
+    dados = dicionario["Professores"]
     dicionario["Professores"].clear()
     return jsonify(dados)
 
@@ -74,8 +92,23 @@ def postAlunos():
         return jsonify("Não há turmas criadas, impossível de registrar alunos.")
     dados = request.json
     alunos = dicionario["Alunos"]
-    
+    turmas = dicionario["Turma"]
+
     #Verifica se já tem um aluno na
+    try:
+        turma_existe = False
+
+        for turma in turmas:
+            if turma["id"] == dados["turma_id"]:
+                turma_existe = True
+                break  # Se encontrou a turma, sai do loop
+        
+        if not turma_existe:
+            raise ValueError("Impossível criar aluno sem uma turma existente")
+
+    except ValueError as e:
+        return jsonify({"erro": str(e)}), 400
+
     for aluno in alunos:
         if aluno["id"] == dados["id"]:
             return jsonify({"erro": "id já utilizada"}),400 
@@ -215,16 +248,35 @@ def getTurmasbyID(idTurma):
     for turma in turmas:
         if turma["id"] == idTurma:
             return jsonify(turma)
-    return jsonify("Turma não encontrada!")
+    return jsonify({"erro": "Turma não encontrada"}),400
 
 @app.route('/turmas', methods=["POST"])
 def postTurmas():
     if empty("Professores"):
         return jsonify("Não é possível criar uma turma sem professores.")
     dados = request.json
-    turma = dicionario["Turma"]
-    
-    turma.append(dados)
+    turmas = dicionario["Turma"]
+    professores = dicionario["Professores"]
+
+    try:
+        professor_existe = False
+
+        for professor in professores:
+            if professor["id"] == dados["professor_id"]:
+                professor_existe = True
+                break  # Se encontrou a turma, sai do loop
+        
+        if not professor_existe:
+            raise ValueError("Impossível criar turma sem um professor")
+
+    except ValueError as e:
+        return jsonify({"erro": str(e)}), 400
+
+    for turma in turmas:
+        if turma["id"] == dados["id"]:
+            return jsonify({"erro": "id já utilizada"}),400 
+
+    turmas.append(dados)
     return jsonify(dados)
 
 @app.route('/turmas/<int:idTurma>', methods=['PUT'])
@@ -243,7 +295,7 @@ def putTurma(idTurma):
                 turma["professor_id"] = resposta["professor_id"]
 
             return jsonify(resposta)
-    return jsonify("Turma não encontrada...")
+    return jsonify({"erro": "Turma não encontrada"}),400
 
 @app.route('/turmas/<int:idTurma>', methods=["DELETE"])
 def deleteTurma(idTurma):
@@ -254,7 +306,7 @@ def deleteTurma(idTurma):
             resposta = "Turma deletada com sucesso!"
             return jsonify(resposta)
     else:
-        return jsonify("Turma não encontrada...")
+        return jsonify({"erro": "Turma não encontrada"}),400
 
 #funcoes
 def calcula_idade(data):   

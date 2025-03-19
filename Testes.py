@@ -190,7 +190,7 @@ class TestStringMethods(unittest.TestCase):
         #                ----------------
         #                que representa um dicionario
         #                o dict tem a chave erro
-        #                                 ----------------------
+        #                                   ----------------------
         #                                 o valor da chave erro
         
     def test_006c_id_inexistente_no_delete(self):

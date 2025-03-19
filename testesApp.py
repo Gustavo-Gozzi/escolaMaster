@@ -49,7 +49,7 @@ class TestStringMethods(unittest.TestCase):
             "data_nascimento": "2004-08-29",
             "nota_primeiro_semestre": 8,
             "nota_segundo_semestre": 9,
-            "turma_id": 0
+            "turma_id": 100
         })
         r = requests.post('http://localhost:5000/alunos',json={
             "id": 2,
@@ -58,7 +58,7 @@ class TestStringMethods(unittest.TestCase):
             "data_nascimento": "2002-04-12",
             "nota_primeiro_semestre": 7,
             "nota_segundo_semestre": 10,
-            "turma_id": 0
+            "turma_id": 100
         })
         
         r_lista = requests.get('http://localhost:5000/alunos')
@@ -122,7 +122,7 @@ class TestStringMethods(unittest.TestCase):
             "id": 2,
             "nome": "Mobile",
             "turno": "Noturno",
-            "professor_id": 2
+            "professor_id": 1
         })
         
         r_lista = requests.get('http://localhost:5000/turmas')
@@ -151,7 +151,7 @@ class TestStringMethods(unittest.TestCase):
             "data_nascimento": "1995-03-27",
             "nota_primeiro_semestre": 5,
             "nota_segundo_semestre": 5,
-            "turma_id": 0
+            "turma_id": 1
         })
 
         resposta = requests.get('http://localhost:5000/alunos/3')
@@ -189,7 +189,7 @@ class TestStringMethods(unittest.TestCase):
             "id": 3,
             "nome": "Ressucitação",
             "turno": "Noturno",
-            "professor_id": 3
+            "professor_id": 100
         })
 
         resposta = requests.get('http://localhost:5000/turmas/3')
@@ -210,7 +210,7 @@ class TestStringMethods(unittest.TestCase):
             "data_nascimento": "1991-10-11",
             "nota_primeiro_semestre": 5,
             "nota_segundo_semestre": 5,
-            "turma_id": 0
+            "turma_id": 1
         })
         requests.delete('http://localhost:5000/alunos/4')
         r_get = requests.get('http://localhost:5000/alunos')
@@ -248,13 +248,127 @@ class TestStringMethods(unittest.TestCase):
         for turma in turmas:
             if turma["nome"] == "Farm":
                 self.fail(f"A turma {turma['nome']} não foi deletada.")   
-    
 
+    def test_013_POST_Aluno_SemTurma(self):
+        r_reset = requests.post('http://localhost:5000/reseta/alunos')
 
+        r = requests.post('http://localhost:5000/alunos',json={
+            "id": 1,
+            "nome": "Joao",
+            "data_nascimento": "2004-08-29",
+            "nota_primeiro_semestre": 8,
+            "nota_segundo_semestre": 9,
+            "turma_id": 100
+        })
+        self.assertEqual(r.status_code,200)
 
+        r = requests.post('http://localhost:5000/alunos',json={
+            "id": 2,
+            "nome": "Mikael",
+            "data_nascimento": "2002-04-12",
+            "nota_primeiro_semestre": 7,
+            "nota_segundo_semestre": 10,
+            "turma_id": 9
+        })
+        self.assertEqual(r.status_code,400)
+
+        r_lista = requests.get('http://localhost:5000/alunos')
+        alunos = r_lista.json()
+
+        joao = False
+        mikael = False
+        for aluno in alunos:
+            if aluno['nome'] == 'Joao':
+                joao = True
+            if aluno['nome'] == 'Mikael':
+                mikael = True
+        
+        if not joao:
+            self.fail('aluno Joao nao encontrado.')
+        if mikael:
+            self.fail('aluno Mikael foi criado sem uma turma existente.')
+
+    def test_014_POST_Turma_SemProfessor(self):
+        r_reset = requests.post('http://localhost:5000/reseta/turmas')
+
+        r = requests.post('http://localhost:5000/turmas',json={
+            "id": 1,
+            "nome": "API",
+            "turno": "Noturno",
+            "professor_id": 100
+        })
+        
+        self.assertEqual(r.status_code,200)
+
+        r = requests.post('http://localhost:5000/turmas',json={
+            "id": 2,
+            "nome": "Mobile",
+            "turno": "Noturno",
+            "professor_id": 5
+        })
+        
+        self.assertEqual(r.status_code,400)
+
+        r_lista = requests.get('http://localhost:5000/turmas')
+        turmas = r_lista.json()
+
+        api = False
+        mobile = False
+        for turma in turmas:
+            if turma['nome'] == 'API':
+                api = True
+            if turma['nome'] == 'Mobile':
+                mobile = True
+        
+        if not api:
+            self.fail('materia API nao encontrada.')
+        if mobile:
+            self.fail('materia Mobile foi criada sem vinculo com professores.')
   
+    def test_015_POST_Aluno_comIDigual(self):
+        r_reset = requests.post('http://localhost:5000/reseta/alunos')
+        self.assertEqual(r_reset.status_code,200)
 
-    
+        r = requests.post('http://localhost:5000/alunos',json={"id": 7,"nome": "Vitor","data_nascimento": "2004-08-29","nota_primeiro_semestre": 0,"nota_segundo_semestre": 0,"turma_id": 1})
+        self.assertEqual(r.status_code,200)
+
+        r = requests.post('http://localhost:5000/alunos',json={"id": 7,"nome": "João","data_nascimento": "2004-08-29","nota_primeiro_semestre": 0,"nota_segundo_semestre": 0,"turma_id": 1})
+        self.assertEqual(r.status_code,400)
+        self.assertEqual(r.json()['erro'],'id já utilizada')    
+
+    def test_016_POST_professor_comIDigual(self):
+        r_reset = requests.post('http://localhost:5000/reseta/professores')
+        self.assertEqual(r_reset.status_code,200)
+
+        r = requests.post('http://localhost:5000/professores',json={"id": 7,"nome": "Caio","idade": 0,"data_nascimento": "2004-08-29","disciplina": "API","salario": 5000})
+        self.assertEqual(r.status_code,200)
+        
+        r = requests.post('http://localhost:5000/professores',json={"id": 7,"nome": "Odair","idade": 0,"data_nascimento": "2004-08-29","disciplina": "API","salario": 5000})
+        
+        self.assertEqual(r.status_code,400)
+        self.assertEqual(r.json()['erro'],'id já utilizada')
+
+    def test_017_POST_turma_comIDigual(self):
+        r_reset = requests.post('http://localhost:5000/reseta/turmas')
+        self.assertEqual(r_reset.status_code,200)
+
+        r = requests.post('http://localhost:5000/turmas',json={
+            "id": 2,
+            "nome": "Mobile",
+            "turno": "Noturno",
+            "professor_id": 7
+        })
+        self.assertEqual(r.status_code,200)
+        
+        r = requests.post('http://localhost:5000/turmas',json={
+            "id": 2,
+            "nome": "API",
+            "turno": "Noturno",
+            "professor_id": 7
+        })
+        
+        self.assertEqual(r.status_code,400)
+        self.assertEqual(r.json()['erro'],'id já utilizada')
 
 def runTests():
         suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestStringMethods)
