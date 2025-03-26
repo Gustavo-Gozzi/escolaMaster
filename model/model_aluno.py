@@ -91,6 +91,14 @@ def put_Alunos(idAluno, resposta):
                 aluno["media_final"] = media(nota1, nota2)
             return "Alteração realizada com sucesso!"
 
+def delete_aluno(idAluno):
+    alunos = dicionario["Alunos"]
+    for aluno in alunos: 
+        if aluno["id"] == idAluno:      
+            alunos.remove(aluno)        
+            return aluno
+    else:
+        return "erro: Aluno não encontrado",404
 
     #funções
 def calcula_idade(data):   

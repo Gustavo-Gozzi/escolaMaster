@@ -99,13 +99,9 @@ def putAlunos(idAluno):
 
 @app.route('/alunos/<int:idAluno>', methods=["DELETE"])
 def deleteAlunos(idAluno):
-    alunos = dicionario["Alunos"]
-    for aluno in alunos: 
-        if aluno["id"] == idAluno:      
-            alunos.remove(aluno)        
-            return jsonify(aluno)
-    else:
-        return jsonify({"erro": "Aluno não encontrado"}),404
+    aluno = modelA.delete_aluno(idAluno)
+    return jsonify(aluno)
+
 
 # Seção Professores
 
