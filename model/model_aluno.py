@@ -13,6 +13,7 @@ dicionario = {
     ],
 }
 
+############### ALUNOS ######################## 
 def lista_alunos():
     alunos = dicionario["Alunos"]
     return alunos
@@ -66,6 +67,29 @@ def post_alunos(dados):
 
     alunos.append(dados)
     return "Aluno adicionado com sucesso"
+
+def put_Alunos(idAluno, resposta):
+    alunos = dicionario["Alunos"]
+    for aluno in alunos:
+        if aluno['id'] == idAluno:
+
+            if "nome" not in resposta:
+                    return "erro : aluno sem nome",400 
+
+            if aluno['nome'] != resposta['nome']: 
+                aluno['nome'] = resposta['nome'] 
+            if aluno['data_nascimento'] != resposta['data_nascimento']:
+                aluno['data_nascimento'] = resposta['data_nascimento']
+                dt_nascimento = resposta["data_nascimento"] 
+                idade = calcula_idade(dt_nascimento)     
+                aluno["idade"] = idade                   
+            if aluno['nota_primeiro_semestre'] != resposta["nota_primeiro_semestre"] or aluno['nota_segundo_semestre'] != resposta['nota_segundo_semestre']:
+                aluno["nota_primeiro_semestre"] = resposta["nota_primeiro_semestre"]
+                aluno["nota_segundo_semestre"] = resposta["nota_segundo_semestre"]
+                nota1 = resposta["nota_primeiro_semestre"]  
+                nota2 = resposta["nota_segundo_semestre"]   
+                aluno["media_final"] = media(nota1, nota2)
+            return "Alteração realizada com sucesso!"
 
 
     #funções

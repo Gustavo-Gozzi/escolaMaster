@@ -93,30 +93,9 @@ def postAlunos():
 
 @app.route('/alunos/<int:idAluno>', methods=["PUT"])
 def putAlunos(idAluno):
-    alunos = dicionario["Alunos"]
-    for aluno in alunos:
-        if aluno['id'] == idAluno:
-            resposta = request.json
-
-            if "nome" not in resposta:
-                    return jsonify({"erro": "aluno sem nome"}),400 
-
-            if aluno['nome'] != resposta['nome']: 
-                aluno['nome'] = resposta['nome'] 
-            if aluno['data_nascimento'] != resposta['data_nascimento']:
-                aluno['data_nascimento'] = resposta['data_nascimento']
-                dt_nascimento = resposta["data_nascimento"] 
-                idade = calcula_idade(dt_nascimento)     
-                aluno["idade"] = idade                   
-            if aluno['nota_primeiro_semestre'] != resposta["nota_primeiro_semestre"] or aluno['nota_segundo_semestre'] != resposta['nota_segundo_semestre']:
-                aluno["nota_primeiro_semestre"] = resposta["nota_primeiro_semestre"]
-                aluno["nota_segundo_semestre"] = resposta["nota_segundo_semestre"]
-                nota1 = resposta["nota_primeiro_semestre"]  
-                nota2 = resposta["nota_segundo_semestre"]   
-                aluno["media_final"] = media(nota1, nota2) 
-            
-            return jsonify(resposta)
-    return jsonify({"erro": "Aluno não encontrado"}),404
+    resposta = request.json
+    aluno = modelA.put_Alunos(idAluno, resposta)
+    return jsonify(aluno)
 
 @app.route('/alunos/<int:idAluno>', methods=["DELETE"])
 def deleteAlunos(idAluno):
