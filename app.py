@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 import model.model_aluno as modelA
+import model.model_professor as modelP
 import datetime
 
 app = Flask(__name__)
@@ -107,73 +108,31 @@ def deleteAlunos(idAluno):
 
 @app.route('/professores', methods=['GET'])
 def getProfessores():
-    dados = dicionario["Professores"]
+    dados = modelP.lista_professores()
     return jsonify(dados)
 
 @app.route('/professores/<int:idProfessor>', methods=['GET'])
 def getProfessoresByID(idProfessor):
-    professores = dicionario["Professores"] 
-    for professor in professores:           
-        if professor["id"] == idProfessor:  
-            return jsonify(professor)       
-    else:
-        return jsonify({"erro": "Professor não encontrado"}),400
+    professor = modelP.professores_by_id(idProfessor)
+    return jsonify(professor)
 
 @app.route('/professores', methods=["POST"])
 def postProfessores():
     dados = request.json
-    professores = dicionario["Professores"]
-    if not "data_nascimento" in dados:
-        return jsonify("Impossível registrar professor sem Data de Nascimento."),400
-
-    for professor in professores: 
-        if professor["id"] == dados["id"]:
-            return jsonify({"erro": "id já utilizada"}),400 
-    
-    if "nome" not in dados:
-        return jsonify({"erro": "professor sem nome"}),400 
-
-    dt_nascimento = dados["data_nascimento"] 
-    idade = calcula_idade(dt_nascimento)     
-    dados["idade"] = idade                  
-
-    professores.append(dados)
-    return jsonify(dados)
+    professor = modelP.post_professor(dados)
+    return jsonify(professor)
 
 @app.route('/professores/<int:idProfessor>', methods=['PUT'])
 def putProfessores(idProfessor):
-    professores = dicionario["Professores"]
-    for professor in professores:
-        if professor["id"] == idProfessor:
-            resposta = request.json
-
-            if "nome" not in resposta:
-                return jsonify({"erro": "professor sem nome"}),400 
-
-            if professor['nome'] != resposta['nome']:
-                professor['nome'] = resposta['nome']
-            if professor['data_nascimento'] != resposta['data_nascimento']:
-                professor['data_nascimento'] = resposta['data_nascimento']
-                dt_nascimento = resposta["data_nascimento"] 
-                idade = calcula_idade(dt_nascimento)
-                professor["idade"] = idade
-            if professor['disciplina'] != resposta['disciplina']:
-                professor['disciplina'] = resposta['disciplina']
-            if professor['salario'] != resposta['salario']:
-                professor['salario'] = resposta['salario']
-            return jsonify(resposta)
-    return jsonify({"erro": "Professor não encontrado"}),400
+    resposta = request.json
+    professor = modelP.put_professor(idProfessor, resposta)
+    return jsonify(professor)
+    
             
 @app.route('/professores/<int:idProfessor>', methods=["DELETE"])
 def deleteProfessores(idProfessor):
-    professores = dicionario["Professores"]      
-    for professor in professores:                
-        if professor["id"] == idProfessor:      
-            professores.remove(professor)       
-            resposta = "Professor deletado com sucesso!"
-            return jsonify(resposta)
-    else:
-        return jsonify({"erro": "Professor não encontrado"}),400
+    professor = modelP.delete_professor(idProfessor)
+    return jsonify(professor)
 
 # Seção de Turma:
 
