@@ -1,9 +1,8 @@
 from flask import Flask, jsonify, request
-import model.model_aluno as modelA
-import model.model_professor as modelP
-import datetime
+from configuracao import app
+from controler.control_aluno import alunos_blueprint
 
-app = Flask(__name__)
+app.register_blueprint(alunos_blueprint)
 
 dicionario = {
     "Alunos": [
@@ -72,69 +71,8 @@ def resetaPRofessores():
     dicionario["Professores"].clear()
     return jsonify(dados)
 
-# Seção Alunos
-
-@app.route('/alunos', methods=['GET'])
-def getAlunos():
-    dados = modelA.lista_alunos()
-    return jsonify(dados)
-
-@app.route('/alunos/<int:idAluno>', methods=['GET'])
-def getAlunosbyID(idAluno):
-    aluno = modelA.aluno_by_id(idAluno)
-    return jsonify(aluno)
-    #return jsonify({"erro": "Aluno não encontrado"}),404
 
 
-@app.route('/alunos', methods=["POST"])
-def postAlunos():
-    dados = request.json
-    alunos = modelA.post_alunos(dados)
-    return jsonify(alunos)
-
-@app.route('/alunos/<int:idAluno>', methods=["PUT"])
-def putAlunos(idAluno):
-    resposta = request.json
-    aluno = modelA.put_Alunos(idAluno, resposta)
-    return jsonify(aluno)
-
-@app.route('/alunos/<int:idAluno>', methods=["DELETE"])
-def deleteAlunos(idAluno):
-    aluno = modelA.delete_aluno(idAluno)
-    return jsonify(aluno)
-
-
-# Seção Professores
-
-@app.route('/professores', methods=['GET'])
-def getProfessores():
-    dados = modelP.lista_professores()
-    return jsonify(dados)
-
-@app.route('/professores/<int:idProfessor>', methods=['GET'])
-def getProfessoresByID(idProfessor):
-    professor = modelP.professores_by_id(idProfessor)
-    return jsonify(professor)
-
-@app.route('/professores', methods=["POST"])
-def postProfessores():
-    dados = request.json
-    professor = modelP.post_professor(dados)
-    return jsonify(professor)
-
-@app.route('/professores/<int:idProfessor>', methods=['PUT'])
-def putProfessores(idProfessor):
-    resposta = request.json
-    professor = modelP.put_professor(idProfessor, resposta)
-    return jsonify(professor)
-    
-            
-@app.route('/professores/<int:idProfessor>', methods=["DELETE"])
-def deleteProfessores(idProfessor):
-    professor = modelP.delete_professor(idProfessor)
-    return jsonify(professor)
-
-# Seção de Turma:
 
 @app.route('/turmas', methods=["GET"])
 def getTurmas():
