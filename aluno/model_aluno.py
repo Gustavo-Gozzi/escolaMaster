@@ -110,6 +110,12 @@ def delete_aluno(idAluno):
     else:
         return "erro: Aluno não encontrado"
 
+def resetaAlunos():
+    dados = dicionario["Alunos"]
+    dicionario["Alunos"].clear()
+    return dados
+
+#funcoes
 
 def existe_aluno():
     return dicionario

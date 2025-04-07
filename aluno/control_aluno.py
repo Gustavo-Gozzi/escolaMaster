@@ -37,4 +37,7 @@ def deleteAlunos(idAluno):
     aluno = model_aluno.delete_aluno(idAluno)
     return jsonify(aluno)
 
-print("Oi")
+@aluno_blueprint.route('/reseta/alunos', methods=['POST'])
+def reseta_Alunos():
+    dados = model_aluno.resetaAlunos()
+    return jsonify(dados)

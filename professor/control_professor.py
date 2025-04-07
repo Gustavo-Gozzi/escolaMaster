@@ -31,3 +31,8 @@ def putProfessores(idProfessor):
 def deleteProfessores(idProfessor):
     professor = model_professor.delete_professor(idProfessor)
     return jsonify(professor)
+
+@professor_blueprint.route('/reseta/professores', methods=['POST'])
+def resetaPRofessores():
+    dados = model_professor.reseta_Professores()
+    return jsonify(dados)

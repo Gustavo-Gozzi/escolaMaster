@@ -30,3 +30,8 @@ def putTurma(idTurma):
 def deleteTurma(idTurma):
     turmas = model_turma.deleteTurma(idTurma)
     return jsonify(turmas)
+
+@turma_blueprint.route('/reseta/turmas', methods=['POST'])
+def resetaTurmas():
+    dados = model_turma.reseta_Turmas()
+    return jsonify(dados)

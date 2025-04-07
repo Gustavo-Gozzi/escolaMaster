@@ -87,6 +87,10 @@ def delete_professor(idProfessor):
     else:
         return "Professor não encontrado"
 
+def reseta_Professores():
+    dados = dicionario["Professores"]
+    dicionario["Professores"].clear()
+    return dados
 
 #funcoes
 def existe_professor():
