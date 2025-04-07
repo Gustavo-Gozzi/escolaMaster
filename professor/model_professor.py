@@ -1,3 +1,4 @@
+#from funcoes import calcula_idade, empty
 import datetime
 
 dicionario = {
@@ -17,7 +18,6 @@ dicionario = {
             "data_nascimento": "1925-03-16",
             "disciplina": "Mobile",
             "salario": 5000
-
         }
     ],
 }
@@ -87,6 +87,14 @@ def delete_professor(idProfessor):
     else:
         return "Professor não encontrado"
 
+def reseta_Professores():
+    dados = dicionario["Professores"]
+    dicionario["Professores"].clear()
+    return dados
+
+#funcoes
+def existe_professor():
+    return dicionario
 
 def calcula_idade(data):   
     data = data.split("-")  
@@ -98,3 +106,17 @@ def calcula_idade(data):
     idade = hoje - data_nascimento
     anos = idade.days // 365 
     return anos
+
+def media(nota1, nota2):
+    soma = nota1 + nota2
+    return soma / 2
+
+def empty(texto, dicionario):                       
+    texto = texto.capitalize()          
+    if texto in dicionario:             
+        if len(dicionario[texto]) > 0:  
+            return False                
+        else:                           
+            return True                 
+    else:
+        return False
