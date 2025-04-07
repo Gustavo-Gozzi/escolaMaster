@@ -1,4 +1,4 @@
-from professor.model_professor import existe_professor
+from professor import model_professor
 import datetime
 #from funcoes import empty
 
@@ -32,18 +32,17 @@ def turma_by_id(idTurma):
         if turma["id"] == idTurma:
             return turma
         else:
-            return "Turma não encontrada"
+            return "Turma não existe"
         
 def post_turma(dados):
-    professores = existe_professor()
+    turmas = dicionario["Turma"]
+    professor = model_professor.existe_professor()
     if empty("Professores", professor):
         return "Não é possível criar uma turma sem professores."
 
-    turmas = dicionario["Turma"]
-    
     try:
         professor_existe = False
-        for professor in professores["Professores"]:
+        for professor in professor["Professores"]:
             if professor["id"] == dados["professor_id"]:
                 professor_existe = True
                 break  
@@ -57,8 +56,10 @@ def post_turma(dados):
     for turma in turmas:
         if turma["id"] == dados["id"]:
             return "id já utilizada"
-        
+    
     turmas.append(dados)
+    return "Turma adicionada com sucesso"
+
 
 def put_turma(idTurma, resposta):
     turmas = dicionario["Turma"]
@@ -82,7 +83,6 @@ def deleteTurma(idTurma):
     for turma in turmas:                
         if turma["id"] == idTurma:      
             turmas.remove(turma)        
-            resposta = "Turma deletada com sucesso!"
             return "Turma deletada com sucesso!"
         else:
             return "Turma não encontrada"
@@ -101,9 +101,6 @@ def calcula_idade(data):
     anos = idade.days // 365 
     return anos
 
-def media(nota1, nota2):
-    soma = nota1 + nota2
-    return soma / 2
 
 def empty(texto, dicionario):                       
     texto = texto.capitalize()          

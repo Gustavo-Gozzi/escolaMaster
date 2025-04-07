@@ -1,6 +1,6 @@
-# from funcoes import calcula_idade, media, empty
+from turma import modelo_turma
 import datetime
-import turma.modelo_turma as modeloT
+
 
 dicionario = {
     "Alunos": [
@@ -33,7 +33,7 @@ def aluno_by_id(id_aluno):
 
 
 def post_alunos(dados):
-    turmas = modeloT.existe_turma()
+    turmas = modelo_turma.existe_turma()
     if empty("Turma", turmas):
         return "Não há turmas criadas, impossível de registrar alunos."
     if not "nota_primeiro_semestre" in dados or not "nota_segundo_semestre" in dados:
@@ -106,9 +106,9 @@ def delete_aluno(idAluno):
     for aluno in alunos:
         if aluno["id"] == idAluno:
             alunos.remove(aluno)
-            return aluno
+            return "Aluno deletado com sucesso"
     else:
-        return "erro: Aluno não encontrado", 404
+        return "erro: Aluno não encontrado"
 
 
 def existe_aluno():
@@ -141,3 +141,5 @@ def empty(texto, dicionario):
             return True
     else:
         return False
+
+print("oi")

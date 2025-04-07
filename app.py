@@ -1,8 +1,13 @@
 from flask import Flask, jsonify, request
 from configuracao import app
 from aluno.control_aluno import aluno_blueprint
+from professor.control_professor import professor_blueprint
+from turma.control_turma import turma_blueprint
 
 app.register_blueprint(aluno_blueprint)
+app.register_blueprint(professor_blueprint)
+app.register_blueprint(turma_blueprint)
+
 
 dicionario = {
     "Alunos": [
@@ -70,80 +75,6 @@ def resetaPRofessores():
     dados = dicionario["Professores"]
     dicionario["Professores"].clear()
     return jsonify(dados)
-
-
-
-
-@app.route('/turmas', methods=["GET"])
-def getTurmas():
-    turmas = dicionario["Turma"]
-    return jsonify(turmas)
-
-@app.route('/turmas/<int:idTurma>', methods=["GET"])
-def getTurmasbyID(idTurma):
-    turmas = dicionario["Turma"]
-    for turma in turmas:
-        if turma["id"] == idTurma:
-            return jsonify(turma)
-    return jsonify({"erro": "Turma não encontrada"}),400
-
-@app.route('/turmas', methods=["POST"])
-def postTurmas():
-    if empty("Professores"):
-        return jsonify("Não é possível criar uma turma sem professores.")
-    dados = request.json
-    turmas = dicionario["Turma"]
-    professores = dicionario["Professores"]
-
-    try:
-        professor_existe = False
-
-        for professor in professores:
-            if professor["id"] == dados["professor_id"]:
-                professor_existe = True
-                break  
-        
-        if not professor_existe:
-            raise ValueError("Impossível criar turma sem um professor")
-
-    except ValueError as e:
-        return jsonify({"erro": str(e)}), 400
-
-    for turma in turmas:
-        if turma["id"] == dados["id"]:
-            return jsonify({"erro": "id já utilizada"}),400 
-
-    turmas.append(dados)
-    return jsonify(dados)
-
-@app.route('/turmas/<int:idTurma>', methods=['PUT'])
-def putTurma(idTurma):
-    turmas = dicionario["Turma"]
-    for turma in turmas:
-        if turma["id"] == idTurma:
-            resposta = request.json
-            if turma["nome"] != resposta["nome"]:
-                turma["nome"] = resposta["nome"]
-
-            if turma["turno"] != resposta["turno"]:
-                turma["turno"] = resposta["turno"]
-
-            if turma["professor_id"] != resposta["professor_id"]:
-                turma["professor_id"] = resposta["professor_id"]
-
-            return jsonify(resposta)
-    return jsonify({"erro": "Turma não encontrada"}),400
-
-@app.route('/turmas/<int:idTurma>', methods=["DELETE"])
-def deleteTurma(idTurma):
-    turmas = dicionario["Turma"]      
-    for turma in turmas:                
-        if turma["id"] == idTurma:      
-            turmas.remove(turma)        
-            resposta = "Turma deletada com sucesso!"
-            return jsonify(resposta)
-    else:
-        return jsonify({"erro": "Turma não encontrada"}),400
 
 
 if __name__ == '__main__':

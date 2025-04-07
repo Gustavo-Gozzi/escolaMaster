@@ -1,18 +1,17 @@
 from flask import Blueprint, request, jsonify
-from model_aluno import lista_alunos, aluno_by_id, post_alunos, put_Alunos, delete_aluno
-
+from aluno import model_aluno
 aluno_blueprint = Blueprint("alunos", __name__)
 
 
 @aluno_blueprint.route('/alunos', methods=['GET'])
 def get_alunos():
-    return jsonify(lista_alunos())
+    return jsonify(model_aluno.lista_alunos())
 
 
 
-@aluno_blueprint.route('/alunos', methods=['GET'])
+@aluno_blueprint.route('/alunos/<int:idAluno>', methods=['GET'])
 def getAlunosbyID(idAluno):
-    aluno = aluno_by_id(idAluno)
+    aluno = model_aluno.aluno_by_id(idAluno)
     return jsonify(aluno)
 
 
@@ -20,7 +19,7 @@ def getAlunosbyID(idAluno):
 @aluno_blueprint.route('/alunos', methods=["POST"])
 def postAlunos():
     dados = request.json
-    alunos = post_alunos(dados)
+    alunos = model_aluno.post_alunos(dados)
     return jsonify(alunos)
 
 
@@ -28,14 +27,14 @@ def postAlunos():
 @aluno_blueprint.route('/alunos/<int:idAluno>', methods=["PUT"])
 def putAlunos(idAluno):
     resposta = request.json
-    aluno = put_Alunos(idAluno, resposta)
+    aluno = model_aluno.put_Alunos(idAluno, resposta)
     return jsonify(aluno)
 
 
 
 @aluno_blueprint.route('/alunos/<int:idAluno>', methods=["DELETE"])
 def deleteAlunos(idAluno):
-    aluno = delete_aluno(idAluno)
+    aluno = model_aluno.delete_aluno(idAluno)
     return jsonify(aluno)
 
 print("Oi")
