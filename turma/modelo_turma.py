@@ -1,3 +1,7 @@
+from professor.model_professor import existe_professor
+import datetime
+#from funcoes import empty
+
 dicionario = {
     "Turma": [
         {
@@ -22,7 +26,7 @@ def lista_turmas():
     turmas = dicionario["Turma"]
     return turmas
 
-def turma_by_id():
+def turma_by_id(idTurma):
     turmas = dicionario["Turma"]
     for turma in turmas:
         if turma["id"] == idTurma:
@@ -30,16 +34,16 @@ def turma_by_id():
         else:
             return "Turma não encontrada"
         
-def post_turma():
-    if empty("Professores"):
+def post_turma(dados):
+    professores = existe_professor()
+    if empty("Professores", professor):
         return "Não é possível criar uma turma sem professores."
 
     turmas = dicionario["Turma"]
-    professores = dicionario["Professores"]
-
+    
     try:
         professor_existe = False
-        for professor in professores:
+        for professor in professores["Professores"]:
             if professor["id"] == dados["professor_id"]:
                 professor_existe = True
                 break  
@@ -56,7 +60,8 @@ def post_turma():
         
     turmas.append(dados)
 
-def put_turma(idTurma):
+def put_turma(idTurma, resposta):
+    turmas = dicionario["Turma"]
     for turma in turmas:
         if turma["id"] == idTurma:
             
@@ -82,9 +87,25 @@ def deleteTurma(idTurma):
         else:
             return "Turma não encontrada"
 
+def existe_turma():
+    return dicionario
 
+def calcula_idade(data):   
+    data = data.split("-")  
+    ano = int(data[0])      
+    mes = int(data[1])      
+    dia = int(data[2])      
+    data_nascimento = datetime.date(ano, mes, dia) 
+    hoje = datetime.date.today()
+    idade = hoje - data_nascimento
+    anos = idade.days // 365 
+    return anos
 
-def empty(texto):                       
+def media(nota1, nota2):
+    soma = nota1 + nota2
+    return soma / 2
+
+def empty(texto, dicionario):                       
     texto = texto.capitalize()          
     if texto in dicionario:             
         if len(dicionario[texto]) > 0:  

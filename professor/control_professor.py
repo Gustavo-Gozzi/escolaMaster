@@ -1,4 +1,4 @@
-from model.model_professor import lista_professores, professores_by_id, post_professor, put_professor, delete_professor
+from model_professor import lista_professores, professores_by_id, post_professor, put_professor, delete_professor
 from flask import Blueprint, request, jsonify
 
 professor_blueprint = Blueprint("professores", __name__)

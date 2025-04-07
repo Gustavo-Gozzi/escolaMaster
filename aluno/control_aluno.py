@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from model.model_aluno import lista_alunos, aluno_by_id, post_alunos, put_Alunos, delete_aluno
+from model_aluno import lista_alunos, aluno_by_id, post_alunos, put_Alunos, delete_aluno
 
 aluno_blueprint = Blueprint("alunos", __name__)
 
@@ -37,3 +37,5 @@ def putAlunos(idAluno):
 def deleteAlunos(idAluno):
     aluno = delete_aluno(idAluno)
     return jsonify(aluno)
+
+print("Oi")
