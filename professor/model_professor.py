@@ -18,7 +18,6 @@ dicionario = {
             "data_nascimento": "1925-03-16",
             "disciplina": "Mobile",
             "salario": 5000
-
         }
     ],
 }

@@ -2,43 +2,45 @@ from professor import model_professor
 import datetime
 #from funcoes import empty
 
+
 dicionario = {
-    "Turma": [
-        {
-            "id": 100,
-            "nome": "API",
-            "turno": "Noturno",
-            "professor_id": 1
-        },
+    "Turmas": [
         {
             "id": 200,
-            "nome": "MOBILE",
-            "turno": "Noturno",
-            "professor_id": 2
+            "nome": "DevOps",
+            "professor_id": 101,
+            "turno": "Diurno" 
+        },
+        {
+            "id": 201,
+            "nome": "APIS",
+            "professor_id": 101,
+            "turno": "Noturno"
         }
-    ],
+    ]
 }
 
 
 ###############TURMAS###################
 
 def lista_turmas():
-    turmas = dicionario["Turma"]
+    turmas = dicionario["Turmas"]
     return turmas
 
 def turma_by_id(idTurma):
-    turmas = dicionario["Turma"]
+    turmas = dicionario["Turmas"]
+    
     for turma in turmas:
         if turma["id"] == idTurma:
             return turma
-        else:
-            return "Turma não existe"
+    else:
+        return "Turma não encontrada"
         
 def post_turma(dados):
-    turmas = dicionario["Turma"]
+    turmas = dicionario["Turmas"]
     professor = model_professor.existe_professor()
     if empty("Professores", professor):
-        return "Não é possível criar uma turma sem professores."
+        return "Não há professores registrados, portanto é impossível criar turmas"
 
     try:
         professor_existe = False
@@ -48,7 +50,7 @@ def post_turma(dados):
                 break  
         
         if not professor_existe:
-            raise ValueError("Impossível criar turma sem um professor")
+            raise ValueError("É necessário ter um ID de professor válido")
 
     except ValueError as e:
         return str(e)
@@ -56,13 +58,14 @@ def post_turma(dados):
     for turma in turmas:
         if turma["id"] == dados["id"]:
             return "id já utilizada"
-    
+        
     turmas.append(dados)
+    print(turmas)
     return "Turma adicionada com sucesso"
 
 
 def put_turma(idTurma, resposta):
-    turmas = dicionario["Turma"]
+    turmas = dicionario["Turmas"]
     for turma in turmas:
         if turma["id"] == idTurma:
             
@@ -79,13 +82,13 @@ def put_turma(idTurma, resposta):
     return "Turma não encontrada."
 
 def deleteTurma(idTurma):
-    turmas = dicionario["Turma"]      
+    turmas = dicionario["Turmas"]      
     for turma in turmas:                
         if turma["id"] == idTurma:      
             turmas.remove(turma)        
             return "Turma deletada com sucesso!"
-        else:
-            return "Turma não encontrada"
+    else:
+        return "Turma não encontrada"
 
 def existe_turma():
     return dicionario

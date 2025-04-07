@@ -1,4 +1,4 @@
-from turma import modelo_turma
+from turma import model_turma
 import datetime
 
 
@@ -33,7 +33,7 @@ def aluno_by_id(id_aluno):
 
 
 def post_alunos(dados):
-    turmas = modelo_turma.existe_turma()
+    turmas = model_turma.existe_turma()
     if empty("Turma", turmas):
         return "Não há turmas criadas, impossível de registrar alunos."
     if not "nota_primeiro_semestre" in dados or not "nota_segundo_semestre" in dados:
