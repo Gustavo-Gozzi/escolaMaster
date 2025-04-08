@@ -8,7 +8,7 @@ def reseta_all():
     turmas = model_turma.existe_turma()
     
     alunos["Alunos"].clear()
-    turmas["Turmas"].clear()
+    turmas["Turma"].clear()
     professores["Professores"].clear()
     
     return "Tudo foi apagado."

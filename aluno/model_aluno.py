@@ -53,17 +53,18 @@ def post_alunos(dados):
                 break
 
         if not turma_existe:
-            raise ValueError("Impossível criar aluno sem uma turma existente")
+            return "Impossível criar aluno sem uma turma existente"
 
     except ValueError as e:
         return "erro"
 
     for aluno in alunos:
         if aluno["id"] == dados["id"]:
-            return "erro: id já utilizada", 400
+            dados["erro"] = 400
+            return "erro: id já utilizada"
 
     if "nome" not in dados:
-        return "erro: aluno sem nome", 400
+        return "erro: aluno sem nome"
 
     dt_nascimento = dados["data_nascimento"]
     idade = calcula_idade(dt_nascimento)

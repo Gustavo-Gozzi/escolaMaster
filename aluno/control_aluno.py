@@ -20,7 +20,7 @@ def getAlunosbyID(idAluno):
 def postAlunos():
     dados = request.json
     alunos = model_aluno.post_alunos(dados)
-    return jsonify(alunos)
+    return jsonify(alunos), dados["erro"]
 
 
 
