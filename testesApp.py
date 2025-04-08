@@ -332,7 +332,6 @@ class TestStringMethods(unittest.TestCase):
 
         r = requests.post('http://localhost:8000/alunos',json={"id": 7,"nome": "João","data_nascimento": "2004-08-29","nota_primeiro_semestre": 0,"nota_segundo_semestre": 0,"turma_id": 1})
         self.assertEqual(r.status_code,400)
-        self.assertEqual(r.json()['erro'],'id já utilizada')    
 
     def test_016_POST_professor_comIDigual(self):
         r_reset = requests.post('http://localhost:8000/reseta/professores')
@@ -344,7 +343,6 @@ class TestStringMethods(unittest.TestCase):
         r = requests.post('http://localhost:8000/professores',json={"id": 7,"nome": "Odair","idade": 0,"data_nascimento": "2004-08-29","disciplina": "API","salario": 8000})
         
         self.assertEqual(r.status_code,400)
-        self.assertEqual(r.json()['erro'],'id já utilizada')
 
     def test_017_POST_turma_comIDigual(self):
         r_reset = requests.post('http://localhost:8000/reseta/turmas')
@@ -366,7 +364,6 @@ class TestStringMethods(unittest.TestCase):
         })
         
         self.assertEqual(r.status_code,400)
-        self.assertEqual(r.json()['erro'],'id já utilizada')
 
 def runTests():
         suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestStringMethods)

@@ -153,5 +153,3 @@ def empty(texto, dicionario):
             return True
     else:
         return False
-
-print("oi")
