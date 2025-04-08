@@ -29,19 +29,22 @@ def aluno_by_id(id_aluno):
         if aluno["id"] == id_aluno:
             return aluno
     else:
-        return "Aluno não encontrado."
+        return "Aluno não encontrado!"
 
 
 def post_alunos(dados):
     turmas = model_turma.existe_turma()
     if empty("Turma", turmas):
-        return "Não há turmas criadas, impossível de registrar alunos."
+        return "Não há turmas, impossível criar alunos."
+    
     if not "nota_primeiro_semestre" in dados or not "nota_segundo_semestre" in dados:
         return "É necessário incluir as notas para adicionar um aluno."
+    
     alunos = dicionario["Alunos"]
 
     if not "data_nascimento" in dados:
         return "Impossível registrar aluno sem Data de Nascimento."
+    
     if not "nota_primeiro_semestre" in dados or not "nota_segundo_semestre" in dados:
         return "É necessário incluir as notas para adicionar um aluno."
     try:
@@ -60,7 +63,6 @@ def post_alunos(dados):
 
     for aluno in alunos:
         if aluno["id"] == dados["id"]:
-            dados["erro"] = 400
             return "erro: id já utilizada"
 
     if "nome" not in dados:
@@ -83,15 +85,17 @@ def put_Alunos(idAluno, resposta):
         if aluno['id'] == idAluno:
 
             if "nome" not in resposta:
-                return "erro : aluno sem nome", 400
+                return "erro : aluno sem nome"
 
             if aluno['nome'] != resposta['nome']:
                 aluno['nome'] = resposta['nome']
+
             if aluno['data_nascimento'] != resposta['data_nascimento']:
                 aluno['data_nascimento'] = resposta['data_nascimento']
                 dt_nascimento = resposta["data_nascimento"]
                 idade = calcula_idade(dt_nascimento)
                 aluno["idade"] = idade
+
             if aluno['nota_primeiro_semestre'] != resposta["nota_primeiro_semestre"] or aluno[
                 'nota_segundo_semestre'] != resposta['nota_segundo_semestre']:
                 aluno["nota_primeiro_semestre"] = resposta["nota_primeiro_semestre"]
@@ -99,6 +103,7 @@ def put_Alunos(idAluno, resposta):
                 nota1 = resposta["nota_primeiro_semestre"]
                 nota2 = resposta["nota_segundo_semestre"]
                 aluno["media_final"] = media(nota1, nota2)
+
             return "Alteração realizada com sucesso!"
 
 
@@ -109,7 +114,7 @@ def delete_aluno(idAluno):
             alunos.remove(aluno)
             return "Aluno deletado com sucesso"
     else:
-        return "erro: Aluno não encontrado"
+        return "Aluno não encontrado!"
 
 def resetaAlunos():
     dados = dicionario["Alunos"]
