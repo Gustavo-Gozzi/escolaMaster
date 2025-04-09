@@ -1,1 +1,6 @@
 /venv
+aluno/__pycahce__/
+professor/__pycahce__/
+turma/__pycahce__/
+
+__pycache__/
