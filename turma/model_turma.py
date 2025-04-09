@@ -34,13 +34,13 @@ def turma_by_id(idTurma):
         if turma["id"] == idTurma:
             return turma
     else:
-        return "Turma não encontrada"
+        return  {"msg": "Turma não encontrada", "erro": 400}
         
 def post_turma(dados):
     turmas = dicionario["Turma"]
     professor = model_professor.existe_professor()
     if empty("Professores", professor):
-        return "Não há professores registrados, portanto é impossível criar turmas"
+        return  {"msg": "Não há professores registrados, portanto é impossível criar turmas", "erro": 400}
 
     try:
         professor_existe = False
@@ -50,17 +50,16 @@ def post_turma(dados):
                 break  
         
         if not professor_existe:
-            raise ValueError("É necessário ter um ID de professor válido")
+            return{"msg":"É necessário ter um ID de professor válido", "erro": 400}
 
     except ValueError as e:
         return str(e)
     
     for turma in turmas:
         if turma["id"] == dados["id"]:
-            return "id já utilizada"
+            return  {"msg": "id já utilizada", "erro": 400}
         
     turmas.append(dados)
-    print(turmas)
     return "Turma adicionada com sucesso"
 
 
@@ -79,7 +78,7 @@ def put_turma(idTurma, resposta):
                 turma["professor_id"] = resposta["professor_id"]
 
             return "Alteração realizada com sucesso!"
-    return "Turma não encontrada."
+    return  {"msg": "Turma não encontrada.", "erro": 400}
 
 def deleteTurma(idTurma):
     turmas = dicionario["Turma"]      
@@ -88,7 +87,7 @@ def deleteTurma(idTurma):
             turmas.remove(turma)        
             return "Turma deletada com sucesso!"
     else:
-        return "Turma não encontrada"
+        return  {"msg": "Turma não encontrada", "erro": 400}
 
 
 def reseta_Turmas():

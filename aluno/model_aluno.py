@@ -29,7 +29,7 @@ def aluno_by_id(id_aluno):
         if aluno["id"] == id_aluno:
             return aluno
     else:
-        return "Aluno não encontrado!"
+        return {"msg":"Aluno não encontrado!", "erro": 400}
 
 
 def post_alunos(dados):
@@ -38,15 +38,15 @@ def post_alunos(dados):
         return "Não há turmas, impossível criar alunos."
     
     if not "nota_primeiro_semestre" in dados or not "nota_segundo_semestre" in dados:
-        return "É necessário incluir as notas para adicionar um aluno."
+        return {"msg":"É necessário incluir as notas para adicionar um aluno.", "erro": 400}
     
     alunos = dicionario["Alunos"]
 
     if not "data_nascimento" in dados:
-        return "Impossível registrar aluno sem Data de Nascimento."
+        return {"msg":"Impossível registrar aluno sem Data de Nascimento.", "erro": 400}
     
     if not "nota_primeiro_semestre" in dados or not "nota_segundo_semestre" in dados:
-        return "É necessário incluir as notas para adicionar um aluno."
+        return {"msg":"É necessário incluir as notas para adicionar um aluno.", "erro": 400}
     try:
         turma_existe = False
 
@@ -56,17 +56,17 @@ def post_alunos(dados):
                 break
 
         if not turma_existe:
-            return "Impossível criar aluno sem uma turma existente"
+            return {"msg":"Impossível criar aluno sem uma turma existente", "erro": 400}
 
     except ValueError as e:
         return "erro"
 
     for aluno in alunos:
         if aluno["id"] == dados["id"]:
-            return "erro: id já utilizada"
+            return {"msg":"erro: id já utilizada", "erro": 400}
 
     if "nome" not in dados:
-        return "erro: aluno sem nome"
+        return {"msg":"Aluno sem nome.", "erro": 400}
 
     dt_nascimento = dados["data_nascimento"]
     idade = calcula_idade(dt_nascimento)
@@ -85,7 +85,7 @@ def put_Alunos(idAluno, resposta):
         if aluno['id'] == idAluno:
 
             if "nome" not in resposta:
-                return "erro : aluno sem nome"
+                return {"msg":"Aluno sem nome.", "erro": 400}
 
             if aluno['nome'] != resposta['nome']:
                 aluno['nome'] = resposta['nome']
@@ -114,7 +114,7 @@ def delete_aluno(idAluno):
             alunos.remove(aluno)
             return "Aluno deletado com sucesso"
     else:
-        return "Aluno não encontrado!"
+        return {"msg":"Aluno não encontrado!", "erro": 400}
 
 def resetaAlunos():
     dados = dicionario["Alunos"]

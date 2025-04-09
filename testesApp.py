@@ -42,13 +42,27 @@ class TestStringMethods(unittest.TestCase):
 
     #Testando POST
     def test_004_POST_alunos(self):
+        requests.post('http://localhost:8000/professores', json={
+        "data_nascimento": "2004-08-29",
+        "disciplina": "API",
+        "id": 50,
+        "idade": 20,
+        "nome": "Caio",
+        "salario": 8000
+    })
+        requests.post('http://localhost:8000/turmas',json={
+            "id": 7,
+            "nome": "Mobile",
+            "professor_id": 50,
+            "turno": "Noturno"
+        })
         r = requests.post('http://localhost:8000/alunos',json={
             "id": 1,
             "nome": "Joao",
             "data_nascimento": "2004-08-29",
             "nota_primeiro_semestre": 8,
             "nota_segundo_semestre": 9,
-            "turma_id": 100
+            "turma_id": 7
         })
         r = requests.post('http://localhost:8000/alunos',json={
             "id": 2,
@@ -56,11 +70,14 @@ class TestStringMethods(unittest.TestCase):
             "data_nascimento": "2002-04-12",
             "nota_primeiro_semestre": 7,
             "nota_segundo_semestre": 10,
-            "turma_id": 100
+            "turma_id": 7
         })
         
         r_lista = requests.get('http://localhost:8000/alunos')
         alunos = r_lista.json()
+
+        requests.delete('http://localhost:8000/turmas/7')
+        requests.delete('http://localhost:8000/professores/50')
 
         joao = False
         mikael = False
@@ -187,7 +204,7 @@ class TestStringMethods(unittest.TestCase):
             "id": 3,
             "nome": "Ressucitação",
             "turno": "Noturno",
-            "professor_id": 100
+            "professor_id": 3
         })
 
         resposta = requests.get('http://localhost:8000/turmas/3')
@@ -256,7 +273,7 @@ class TestStringMethods(unittest.TestCase):
             "data_nascimento": "2004-08-29",
             "nota_primeiro_semestre": 8,
             "nota_segundo_semestre": 9,
-            "turma_id": 100
+            "turma_id": 3
         })
         self.assertEqual(r.status_code,200)
 
@@ -266,7 +283,7 @@ class TestStringMethods(unittest.TestCase):
             "data_nascimento": "2002-04-12",
             "nota_primeiro_semestre": 7,
             "nota_segundo_semestre": 10,
-            "turma_id": 9
+            "turma_id": 1000
         })
         self.assertEqual(r.status_code,400)
 
@@ -287,13 +304,21 @@ class TestStringMethods(unittest.TestCase):
             self.fail('aluno Mikael foi criado sem uma turma existente.')
 
     def test_014_POST_Turma_SemProfessor(self):
+        requests.post('http://localhost:8000/professores',json={
+            "id": 4,
+            "nome": "Ireno",
+            "idade": 0,
+            "data_nascimento": "1999-11-21",
+            "disciplina": "Farm em Tibia",
+            "salario": 2200
+        })
         r_reset = requests.post('http://localhost:8000/reseta/turmas')
 
         r = requests.post('http://localhost:8000/turmas',json={
             "id": 1,
             "nome": "API",
             "turno": "Noturno",
-            "professor_id": 100
+            "professor_id": 4
         })
         
         self.assertEqual(r.status_code,200)
@@ -302,7 +327,7 @@ class TestStringMethods(unittest.TestCase):
             "id": 2,
             "nome": "Mobile",
             "turno": "Noturno",
-            "professor_id": 5
+            "professor_id": 1987
         })
         
         self.assertEqual(r.status_code,400)
@@ -322,6 +347,8 @@ class TestStringMethods(unittest.TestCase):
             self.fail('materia API nao encontrada.')
         if mobile:
             self.fail('materia Mobile foi criada sem vinculo com professores.')
+
+        requests.delete('http://localhost:8000/professores/4')
   
     def test_015_POST_Aluno_comIDigual(self):
         r_reset = requests.post('http://localhost:8000/reseta/alunos')

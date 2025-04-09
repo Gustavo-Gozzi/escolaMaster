@@ -33,20 +33,20 @@ def professores_by_id(id_professor):
         if professor["id"] == id_professor:  
             return professor       
     else:
-        return "Professor não encontrado"
+        return {"msg": "Professor não encontrado", "erro": 400}
     
 
 def post_professor(dados):
     professores = dicionario["Professores"]
     if not "data_nascimento" in dados:
-        return "Impossível registrar professor sem Data de Nascimento."
+        return  {"msg":"Impossível registrar professor sem Data de Nascimento.", "erro": 400}
 
     for professor in professores: 
         if professor["id"] == dados["id"]:
-            return "id já utilizada"
+            return  {"msg":"id já utilizada", "erro": 400}
     
     if "nome" not in dados:
-        return "professor sem nome"
+        return  {"msg":"professor sem nome", "erro": 400}
 
     dt_nascimento = dados["data_nascimento"] 
     idade = calcula_idade(dt_nascimento)     
@@ -61,7 +61,7 @@ def put_professor(idProfessor, resposta):
         if professor["id"] == idProfessor:
 
             if "nome" not in resposta:
-                return "professor sem nome"
+                return {"msg":"professor sem nome", "erro": 400}
 
             if professor['nome'] != resposta['nome']:
                 professor['nome'] = resposta['nome']
@@ -75,7 +75,7 @@ def put_professor(idProfessor, resposta):
             if professor['salario'] != resposta['salario']:
                 professor['salario'] = resposta['salario']
             return "Alteração realizada com sucesso!"
-    return "Professor não encontrado"
+    return  {"msg":"Professor não encontrado", "erro": 400}
 
 def delete_professor(idProfessor):
     professores = dicionario["Professores"]      
@@ -85,7 +85,7 @@ def delete_professor(idProfessor):
             return "Professor deletado com sucesso!"
              
     else:
-        return "Professor não encontrado"
+        return  {"msg":"Professor não encontrado", "erro": 400}
 
 def reseta_Professores():
     dados = dicionario["Professores"]
