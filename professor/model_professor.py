@@ -1,7 +1,20 @@
 #from funcoes import calcula_idade, empty
 import datetime
+from configuracao import db
 
-dicionario = {
+class Professor(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(200), nullable=False)
+    idade = db.Column(db.Integer, nullable=False)
+    data_nascimento = db.Column(db.String(10), nullable=False)
+    disciplina = db.Column(db.String(200), nullable=False)
+    salario = db.Column(db.Numeric(10,2), nullable=False)
+
+    #relacao
+    turma = db.relationship('Turma', backref='professor', lazy=True)
+
+
+'''dicionario = {
     "Professores": [          #lista de dicionarios
         {
             "id": 100,
@@ -20,81 +33,120 @@ dicionario = {
             "salario": 5000
         }
     ],
-}
+}'''
 
 def lista_professores():
-    professores = dicionario["Professores"] #-> professores [0, 1..]
-    return professores
+    professores = Professor.query.all()
+    lista = []
+    for professor in professores:
+        fessor = {
+            "id": professor.id,
+            "nome": professor.nome,
+            "idade": professor.idade,
+            "data_nascimento": professor.data_nascimento,
+            "disciplina": professor.disciplina,
+            "salario": professor.salario
+        }
+        lista.append(fessor)
+    return lista
 
 
 def professores_by_id(id_professor):
-    professores = dicionario["Professores"] 
-    for professor in professores:           
-        if professor["id"] == id_professor:  
-            return professor       
-    else:
+    professor = Professor.query.get(id_professor)
+    try:
+        fessor = {
+            "id": professor.id,
+            "nome": professor.nome,
+            "idade": professor.idade,
+            "data_nascimento": professor.data_nascimento,
+            "disciplina": professor.disciplina,
+            "salario": professor.salario
+        }
+        return fessor
+    except:     
         return {"msg": "Professor não encontrado", "erro": 400}
     
 
 def post_professor(dados):
-    professores = dicionario["Professores"]
     if not "data_nascimento" in dados:
         return  {"msg":"Impossível registrar professor sem Data de Nascimento.", "erro": 400}
-
-    for professor in professores: 
-        if professor["id"] == dados["id"]:
-            return  {"msg":"id já utilizada", "erro": 400}
     
     if "nome" not in dados:
         return  {"msg":"professor sem nome", "erro": 400}
 
-    dt_nascimento = dados["data_nascimento"] 
-    idade = calcula_idade(dt_nascimento)     
-    dados["idade"] = idade                  
+    nascimento = dados["data_nascimento"] 
+    age = calcula_idade(nascimento)     
 
-    professores.append(dados)
-    return "Professor adicionado com sucesso!"
+    try:
+        novo_professor = Professor(nome=dados["nome"], idade=age, data_nascimento=nascimento, disciplina=dados["disciplina"], salario=dados["salario"])
+        db.session.add(novo_professor)
+        db.session.commit()
+        return "Professor adicionado com sucesso!"
+
+    except:
+        return {"msg":"Não foi possível aidicionar professor", "erro": 500}
+    
 
 def put_professor(idProfessor, resposta):
-    professores = dicionario["Professores"]
-    for professor in professores:
-        if professor["id"] == idProfessor:
+    professor = Professor.query.get(idProfessor)
 
-            if "nome" not in resposta:
-                return {"msg":"professor sem nome", "erro": 400}
+    try:
+        if "nome" not in resposta:
+            return {"msg":"professor sem nome", "erro": 400}
 
-            if professor['nome'] != resposta['nome']:
-                professor['nome'] = resposta['nome']
-            if professor['data_nascimento'] != resposta['data_nascimento']:
-                professor['data_nascimento'] = resposta['data_nascimento']
-                dt_nascimento = resposta["data_nascimento"] 
-                idade = calcula_idade(dt_nascimento)
-                professor["idade"] = idade
-            if professor['disciplina'] != resposta['disciplina']:
-                professor['disciplina'] = resposta['disciplina']
-            if professor['salario'] != resposta['salario']:
-                professor['salario'] = resposta['salario']
-            return "Alteração realizada com sucesso!"
-    return  {"msg":"Professor não encontrado", "erro": 400}
+        if professor.nome != resposta['nome']:
+            professor.nome = resposta['nome']
+
+        if professor.data_nascimento != resposta['data_nascimento']:
+            professor.data_nascimento = resposta['data_nascimento']
+            dt_nascimento = resposta["data_nascimento"] 
+            idade = calcula_idade(dt_nascimento)
+            professor.idade = idade
+
+        if professor.disciplina != resposta['disciplina']:
+            professor.disciplina = resposta['disciplina']
+
+        if professor.salario != resposta['salario']:
+            professor.salario = resposta['salario']
+
+        db.session.commit()
+        return "Alteração realizada com sucesso!"
+        
+    except:
+        return  {"msg":"Professor não encontrado", "erro": 400}
 
 def delete_professor(idProfessor):
-    professores = dicionario["Professores"]      
-    for professor in professores:                
-        if professor["id"] == idProfessor:      
-            professores.remove(professor)       
-            return "Professor deletado com sucesso!"
-             
-    else:
+    try:
+        professor = Professor.query.get(idProfessor)     
+        db.session.delete(professor)
+        db.session.commit()       
+        return "Professor deletado com sucesso!"
+      
+    except:
         return  {"msg":"Professor não encontrado", "erro": 400}
 
 def reseta_Professores():
-    dados = dicionario["Professores"]
-    dicionario["Professores"].clear()
-    return dados
+    professores = Professor.query.all()
+    for professor in professores:
+        db.session.delete(professor)
+    db.session.commit
+    return "Tudo foi apagado"
 
 #funcoes
 def existe_professor():
-    return dicionario
+    professores = Professor.query.all()
+    lista = []
+    for professor in professores:
+        fessor = {
+            "id": professor.id,
+            "nome": professor.nome,
+            "idade": professor.idade,
+            "data_nascimento": professor.data_nascimento,
+            "disciplina": professor.disciplina,
+            "salario": professor.salario
+        }
+        lista.append(fessor)
+    return lista
 
 def calcula_idade(data):   
     data = data.split("-")  

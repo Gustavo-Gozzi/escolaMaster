@@ -1,8 +1,17 @@
 from turma import model_turma
 import datetime
+from configuracao import db
 
+class Aluno(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(200), nullable=False)
+    idade = db.Column(db.Integer, nullable=False)
+    data_nascimento = db.Column(db.String(10), nullable=False)
+    nota_primeiro_semestre = db.Column(db.Numeric(10,2), nullable=False)
+    nota_segundo_semestre = db.Column(db.Numeric(10,2), nullable=False)
+    turma_id = db.Column(db.Integer, db.ForeignKey('turma.id'), nullable=False)
 
-dicionario = {
+'''dicionario = {
     "Alunos": [
         {
             "id": 100,
@@ -14,7 +23,7 @@ dicionario = {
             "turma_id": 0
         }
     ],
-}
+}'''
 
 
 ############### ALUNOS ########################

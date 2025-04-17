@@ -1,9 +1,19 @@
 from professor import model_professor
 import datetime
+from configuracao import db
+
+class Turma(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(200), nullable=False)
+    turno = db.Column(db.String(200), nullable=False)
+    professor_id = db.Column(db.Integer, db.ForeignKey('professor.id'), nullable=False)
+
+    #relacao
+    aluno = db.relationship('Aluno', backref='turma', lazy=True)
 #from funcoes import empty
 
 
-dicionario = {
+'''dicionario = {
     "Turma": [
         {
             "id": 100,
@@ -18,7 +28,7 @@ dicionario = {
             "turno": "Noturno"
         }
     ]
-}
+}'''
 
 
 ###############TURMAS###################
