@@ -28,17 +28,37 @@ class Aluno(db.Model):
 
 ############### ALUNOS ########################
 def lista_alunos():
-    alunos = dicionario["Alunos"]
-    return alunos
+    alunos = Aluno.query.all()
+    lista = []
+    for aluno in alunos:
+        estudante = {
+            "id": aluno.id,
+            "nome": aluno.nome,
+            "idade": aluno.idade,
+            "data_nascimento": aluno.data_nascimento,
+            "nota_primeiro_semestre": aluno.nota_primeiro_semestre,
+            "nota_segundo_semestre": aluno.nota_segundo_semestre,
+            "turma_id": aluno.turma_id
+        }
+        lista.append(estudante)
+    return lista
 
 
 def aluno_by_id(id_aluno):
-    alunos = dicionario["Alunos"]
-    for aluno in alunos:
-        if aluno["id"] == id_aluno:
-            return aluno
-    else:
-        return {"msg":"Aluno não encontrado!", "erro": 400}
+    aluno = Aluno.query.get(id_aluno)
+    try:
+        estudante = {
+            "id": aluno.id,
+            "nome": aluno.nome,
+            "idade": aluno.idade,
+            "data_nascimento": aluno.data_nascimento,
+            "nota_primeiro_semestre": aluno.nota_primeiro_semestre,
+            "nota_segundo_semestre": aluno.nota_segundo_semestre,
+            "turma_id": aluno.turma_id
+        }
+        return estudante
+    except:     
+        return {"msg": "Professor não encontrado", "erro": 400}
 
 
 def post_alunos(dados):
