@@ -130,7 +130,7 @@ def reseta_Professores():
     for professor in professores:
         db.session.delete(professor)
     db.session.commit
-    return "Tudo foi apagado"
+    return "Todos os professores foram apagados."
 
 #funcoes
 def existe_professor():
