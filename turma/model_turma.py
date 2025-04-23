@@ -62,7 +62,7 @@ def turma_by_id(idTurma):
         
         
 def post_turma(dados):
-    turmas = Turma.query.all()
+    
     professores = model_professor.existe_professor()
     if empty(dados["professor_id"]):
         return  {"msg": "Não há professores registrados, portanto é impossível criar turmas", "erro": 400}
@@ -78,9 +78,11 @@ def post_turma(dados):
         if not professor_existe:
             return{"msg":"É necessário ter um ID de professor válido", "erro": 400}
 
+    
     except ValueError as e:
         return str(e)
     
+    turmas = Turma.query.all()
     for turma in turmas:
         if turma.id == dados["id"]:
             return  {"msg": "id já utilizada", "erro": 400}
@@ -97,21 +99,25 @@ def post_turma(dados):
 
 def put_turma(idTurma, resposta):
     turma = Turma.query.get(idTurma)
+    chaves_necessarias = ["nome", "professor_id", "turno"]
+    chaves_resposta = resposta.keys()
+    faltantes = []
+
+    for item in chaves_necessarias:
+        if item not in chaves_resposta:
+            faltantes.append(item)
+
+    if len(faltantes) > 0:
+        return {"msg": f"É necessário preencher todos os campos. Faltantes: {faltantes}", "erro": 400}        
 
     try:
-        if turma.id == idTurma:
-            
-            if turma.nome != resposta["nome"]:
-                turma.nome = resposta["nome"]
-
-            if turma.turno != resposta["turno"]:
-                turma.turno = resposta["turno"]
-
-            if turma.professor_id != resposta["professor_id"]:
-                turma.professor_id = resposta["professor_id"]
+        turma.nome = resposta["nome"]
+        turma.professor_id = resposta["professor_id"]
+        turma.turno = resposta["turno"]
         
-            db.session.commit()
-            return "Alteração realizada com sucesso!"
+        db.session.commit()
+        return "Alteração realizada com sucesso!"
+    
     except: 
         return  {"msg": "Turma não encontrada.", "erro": 400}
 
@@ -120,10 +126,10 @@ def deleteTurma(idTurma):
         turma = Turma.query.get(idTurma)     
         db.session.delete(turma)
         db.session.commit()       
-        return "Professor deletado com sucesso!"
+        return "Turma deletada com sucesso!"
       
     except:
-        return  {"msg":"Professor não encontrado", "erro": 400}
+        return  {"msg":"Turma não encontrada", "erro": 400}
 
 
 def reseta_Turmas():
