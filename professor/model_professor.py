@@ -89,25 +89,24 @@ def post_professor(dados):
 
 def put_professor(idProfessor, resposta):
     professor = Professor.query.get(idProfessor)
+    chaves_necessarias = ["nome", "data_nascimento", "disciplina", "salario"]
+    chaves_resposta = resposta.keys()
+    faltantes = []
+
+    for item in chaves_necessarias:
+        if item not in chaves_resposta:
+            faltantes.append(item)
+
+    if len(faltantes) > 0:
+        return {"msg": f"É necessário preencher todos os campos. Faltantes: {faltantes}", "erro": 400}  
 
     try:
-        if "nome" not in resposta:
-            return {"msg":"professor sem nome", "erro": 400}
-
-        if professor.nome != resposta['nome']:
-            professor.nome = resposta['nome']
-
-        if professor.data_nascimento != resposta['data_nascimento']:
-            professor.data_nascimento = resposta['data_nascimento']
-            dt_nascimento = resposta["data_nascimento"] 
-            idade = calcula_idade(dt_nascimento)
-            professor.idade = idade
-
-        if professor.disciplina != resposta['disciplina']:
-            professor.disciplina = resposta['disciplina']
-
-        if professor.salario != resposta['salario']:
-            professor.salario = resposta['salario']
+        
+        professor.nome = resposta["nome"]
+        professor.data_nascimento = resposta["data_nascimento"]
+        professor.disciplina = resposta["disciplina"]
+        professor.salario = resposta["salario"]
+        professor.idade = calcula_idade(resposta["data_nascimento"])
 
         db.session.commit()
         return "Alteração realizada com sucesso!"
