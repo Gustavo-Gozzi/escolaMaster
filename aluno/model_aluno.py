@@ -17,7 +17,7 @@ def lista_alunos():
     alunos = Aluno.query.all()
     lista = []
     for aluno in alunos:
-        estudante = {
+        lista.append({
             "id": aluno.id,
             "nome": aluno.nome,
             "idade": aluno.idade,
@@ -25,8 +25,8 @@ def lista_alunos():
             "nota_primeiro_semestre": aluno.nota_primeiro_semestre,
             "nota_segundo_semestre": aluno.nota_segundo_semestre,
             "turma_id": aluno.turma_id
-        }
-        lista.append(estudante)
+        })
+    
     return lista
 
 
@@ -53,7 +53,7 @@ def post_alunos(dados):
         return {"msg":"Aluno sem nome.", "erro": 400}
     
     if empty(dados["turma_id"]):
-        return "Não há turmas, impossível criar alunos."
+        return {"msg":"Não há turmas, impossível criar alunos.", "erro": 400}
     
     if not "nota_primeiro_semestre" in dados or not "nota_segundo_semestre" in dados:
         return {"msg":"É necessário incluir as notas para adicionar um aluno.", "erro": 400}
@@ -117,10 +117,8 @@ def delete_aluno(idAluno):
         return  {"msg":"Aluno não encontrado", "erro": 400}
 
 def resetaAlunos():
-    alunos = Aluno.query.all()
-    for aluno in alunos:
-        db.session.delete(aluno)
-    db.session.commit
+    db.session.query(Aluno).delete()
+    db.session.commit()
     return "Todos os alunos foram apagados."
 
 #funcoes

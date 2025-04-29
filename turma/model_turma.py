@@ -9,7 +9,7 @@ class Turma(db.Model):
     professor_id = db.Column(db.Integer, db.ForeignKey('professor.id'), nullable=False)
 
     #relacao
-    aluno = db.relationship('Aluno', backref='turma', lazy=True)
+    aluno = db.relationship('Aluno', backref='turma', lazy=True, cascade='all, delete-orphan')
 #from funcoes import empty
 
 
@@ -81,11 +81,6 @@ def post_turma(dados):
     
     except ValueError as e:
         return str(e)
-    
-    turmas = Turma.query.all()
-    for turma in turmas:
-        if turma.id == dados["id"]:
-            return  {"msg": "id já utilizada", "erro": 400}
         
     try:
         nova_turma = Turma(nome=dados["nome"], professor_id=dados["professor_id"], turno=dados["turno"])
@@ -133,11 +128,9 @@ def deleteTurma(idTurma):
 
 
 def reseta_Turmas():
-    turmas = Turma.query.all()
-    for turma in turmas:
-        db.session.delete(turma)
-    db.session.commit
-    return "Todas as turmas foram apagadas."
+    db.session.query(Turma).delete()
+    db.session.commit()
+    return "Todas as turmas foram deletadas com sucesso."
 
 # funcoes
 def existe_turma():

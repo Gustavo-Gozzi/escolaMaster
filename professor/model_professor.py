@@ -11,7 +11,7 @@ class Professor(db.Model):
     salario = db.Column(db.Numeric(10,2), nullable=False)
 
     #relacao
-    turma = db.relationship('Turma', backref='professor', lazy=True)
+    turma = db.relationship('Turma', backref='professor', lazy=True, cascade='all, delete-orphan')
 
 
 '''dicionario = {
@@ -125,10 +125,8 @@ def delete_professor(idProfessor):
         return  {"msg":"Professor não encontrado", "erro": 400}
 
 def reseta_Professores():
-    professores = Professor.query.all()
-    for professor in professores:
-        db.session.delete(professor)
-    db.session.commit
+    db.session.query(Professor).delete()
+    db.session.commit()
     return "Todos os professores foram apagados."
 
 #funcoes
