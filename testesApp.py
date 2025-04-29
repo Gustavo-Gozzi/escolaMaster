@@ -258,14 +258,26 @@ class TestStringMethods(unittest.TestCase):
    
 
     def test_013_POST_Aluno_SemTurma(self):
-        r_reset = requests.post('http://localhost:8000/reseta/alunos')
+        requests.post('http://localhost:8000/reseta/alunos')
+        requests.post('http://localhost:8000/professores',json={
+            "nome": "Ireno",
+            "data_nascimento": "1999-11-21",
+            "disciplina": "Farm em Tibia",
+            "salario": 2200
+        })
+        requests.post('http://localhost:8000/turmas',json={
+            "nome": "Farm",
+            "turno": "Noturno",
+            "professor_id": 1
+        })
+        
 
         r = requests.post('http://localhost:8000/alunos',json={
             "nome": "Joao",
             "data_nascimento": "2004-08-29",
             "nota_primeiro_semestre": 8,
             "nota_segundo_semestre": 9,
-            "turma_id": 2
+            "turma_id": 1
         })
         self.assertEqual(r.status_code,200)
 
