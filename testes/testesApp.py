@@ -3,7 +3,6 @@ import unittest
 
 class TestStringMethods(unittest.TestCase):
     
-
     #Testando POST
     def test_001_POST_professores(self):
         requests.post('http://localhost:8000/reseta')
@@ -27,14 +26,15 @@ class TestStringMethods(unittest.TestCase):
         frodo = False
         for professor in professores:
             if professor['nome'] == 'Gandalf':
-                gandalf = True
+                    gandalf = True
             if professor['nome'] == 'Frodo':
-                frodo = True
-        
+                    frodo = True
+            
         if not gandalf:
             self.fail('professor Gandalf nao encontrado.')
         if not frodo:
             self.fail('professor Frodo nao encontrado.')
+
 
     def test_002_POST_turmas(self):
         r = requests.post('http://localhost:8000/turmas',json={
@@ -258,7 +258,7 @@ class TestStringMethods(unittest.TestCase):
    
 
     def test_013_POST_Aluno_SemTurma(self):
-        requests.post('http://localhost:8000/reseta/alunos')
+        requests.post('http://localhost:8000/reseta')
         requests.post('http://localhost:8000/professores',json={
             "nome": "Ireno",
             "data_nascimento": "1999-11-21",
@@ -321,7 +321,7 @@ class TestStringMethods(unittest.TestCase):
             "id": 1,
             "nome": "API",
             "turno": "Noturno",
-            "professor_id": 4
+            "professor_id": 1
         })
         
         self.assertEqual(r.status_code,200)
@@ -353,47 +353,59 @@ class TestStringMethods(unittest.TestCase):
 
         requests.delete('http://localhost:8000/professores/4')
   
-    def test_015_POST_Aluno_comIDigual(self):
-        r_reset = requests.post('http://localhost:8000/reseta/alunos')
-        self.assertEqual(r_reset.status_code,200)
-
-        r = requests.post('http://localhost:8000/alunos',json={"id": 7,"nome": "Vitor","data_nascimento": "2004-08-29","nota_primeiro_semestre": 0,"nota_segundo_semestre": 0,"turma_id": 1})
-        self.assertEqual(r.status_code,200)
-
-        r = requests.post('http://localhost:8000/alunos',json={"id": 7,"nome": "João","data_nascimento": "2004-08-29","nota_primeiro_semestre": 0,"nota_segundo_semestre": 0,"turma_id": 1})
-        self.assertEqual(r.status_code,400)
-
-    def test_016_POST_professor_comIDigual(self):
-        r_reset = requests.post('http://localhost:8000/reseta/professores')
-        self.assertEqual(r_reset.status_code,200)
-
-        r = requests.post('http://localhost:8000/professores',json={"id": 7,"nome": "Caio","idade": 0,"data_nascimento": "2004-08-29","disciplina": "API","salario": 8000})
-        self.assertEqual(r.status_code,200)
-        
-        r = requests.post('http://localhost:8000/professores',json={"id": 7,"nome": "Odair","idade": 0,"data_nascimento": "2004-08-29","disciplina": "API","salario": 8000})
-        
-        self.assertEqual(r.status_code,400)
-
-    def test_017_POST_turma_comIDigual(self):
-        r_reset = requests.post('http://localhost:8000/reseta/turmas')
-        self.assertEqual(r_reset.status_code,200)
-
-        r = requests.post('http://localhost:8000/turmas',json={
-            "id": 2,
-            "nome": "Mobile",
-            "turno": "Noturno",
-            "professor_id": 7
+    def test_015_POST_Professor_jsonIncompleto(self):
+        requests.post('http://localhost:8000/reseta')
+        r = requests.post('http://localhost:8000/professores',json={
+            "nome": "Ireno",
+            "idade": 0,
+            "data_nascimento": "1999-11-21",
+            "disciplina": "Farm em Tibia",
+            "salario": 2200
         })
-        self.assertEqual(r.status_code,200)
-        
+        self.assertEqual(r.status_code, 200)
+
+        r = requests.post('http://localhost:8000/professores',json={
+            "idade": 0,
+            "data_nascimento": "1999-11-21",
+            "disciplina": "Farm em Tibia",
+            "salario": 2200
+        })
+        self.assertEqual(r.status_code, 400)
+
+        r = requests.post('http://localhost:8000/professores',json={
+            "nome": "Ireno",
+            "idade": 0,
+            "data_nascimento": "1999-11-21",
+            "disciplina": "Farm em Tibia",
+        })
+
+        self.assertEqual(r.status_code, 400)
+
+    def teste_016_POST_Turma_jsonIncompleto(self):
         r = requests.post('http://localhost:8000/turmas',json={
-            "id": 2,
             "nome": "API",
             "turno": "Noturno",
-            "professor_id": 7
+            "professor_id": 1
         })
-        
-        self.assertEqual(r.status_code,400)
+
+        self.assertEqual(r.status_code, 200)
+
+        r = requests.post('http://localhost:8000/turmas',json={
+            "nome": "API",
+            "professor_id": 1
+        })
+
+        self.assertEqual(r.status_code, 400)
+
+        r = requests.post('http://localhost:8000/turmas',json={
+            "turno": "Noturno",
+            "professor_id": 1
+        })
+
+        self.assertEqual(r.status_code, 400)
+
+
+
 
 def runTests():
         suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestStringMethods)

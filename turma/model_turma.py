@@ -89,7 +89,7 @@ def post_turma(dados):
         return "Turma adicionado com sucesso!"
 
     except:
-        return {"msg":"Não foi possível aidicionar turma", "erro": 500}
+        return {"msg":"Não foi possível aidicionar turma", "erro": 400}
 
 
 def put_turma(idTurma, resposta):

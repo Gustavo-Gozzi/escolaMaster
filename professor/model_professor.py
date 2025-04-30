@@ -73,6 +73,17 @@ def post_professor(dados):
     
     if "nome" not in dados:
         return  {"msg":"professor sem nome", "erro": 400}
+    
+    chaves_necessarias = ["nome", "data_nascimento", "disciplina", "salario"]
+    chaves_resposta = dados.keys()
+    faltantes = []
+
+    for item in chaves_necessarias:
+        if item not in chaves_resposta:
+            faltantes.append(item)
+
+    if len(faltantes) > 0:
+        return {"msg": f"É necessário preencher todos os campos. Faltantes: {faltantes}", "erro": 400}
 
     nascimento = dados["data_nascimento"] 
     age = calcula_idade(nascimento)     
