@@ -12,6 +12,30 @@ class Aluno(db.Model):
     turma_id = db.Column(db.Integer, db.ForeignKey('turma.id'), nullable=False)
 
 
+'''dicionario = {
+    "alunos": [          #lista de dicionarios
+        {
+            "id": 100,
+            "nome": "João",
+            "idade": 18,
+            "data_nascimento": "2005-03-20",
+            "nota_primeiro_semestre": "10",
+            "nota_segundo_semestre": "10",
+            "turma_id": "50"
+        },
+        {
+            "id": 101,
+            "nome": "Gustavo",
+            "idade": 18,
+            "data_nascimento": "2006-05-16",
+            "nota_primeiro_semestre": "5",
+            "nota_segundo_semestre": "5",
+            "turma_id": "50"
+        },
+    ],
+}'''
+
+
 ############### ALUNOS ########################
 def lista_alunos():
     alunos = Aluno.query.all()
