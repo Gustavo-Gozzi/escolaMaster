@@ -13,28 +13,6 @@ class Professor(db.Model):
     #relacao
     turma = db.relationship('Turma', backref='professor', lazy=True, cascade='all, delete-orphan')
 
-
-'''dicionario = {
-    "Professores": [          #lista de dicionarios
-        {
-            "id": 100,
-            "nome": "Caio",
-            "idade": 0,
-            "data_nascimento": "2000-03-16",
-            "disciplina": "API",
-            "salario": 5000
-        },
-        {
-            "id": 101,
-            "nome": "Odair",
-            "idade": 100,
-            "data_nascimento": "1925-03-16",
-            "disciplina": "Mobile",
-            "salario": 5000
-        }
-    ],
-}'''
-
 def lista_professores():
     professores = Professor.query.all()
     lista = []

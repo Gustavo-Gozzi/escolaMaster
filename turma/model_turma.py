@@ -10,28 +10,6 @@ class Turma(db.Model):
 
     #relacao
     aluno = db.relationship('Aluno', backref='turma', lazy=True, cascade='all, delete-orphan')
-#from funcoes import empty
-
-
-'''dicionario = {
-    "Turma": [
-        {
-            "id": 100,
-            "nome": "DevOps",
-            "professor_id": 101,
-            "turno": "Diurno" 
-        },
-        {
-            "id": 201,
-            "nome": "APIS",
-            "professor_id": 101,
-            "turno": "Noturno"
-        }
-    ]
-}'''
-
-
-###############TURMAS###################
 
 def lista_turmas():
     turmas = Turma.query.all()
@@ -126,7 +104,6 @@ def deleteTurma(idTurma):
     except:
         return  {"msg":"Turma não encontrada", "erro": 400}
 
-
 def reseta_Turmas():
     db.session.query(Turma).delete()
     db.session.commit()
@@ -157,13 +134,10 @@ def calcula_idade(data):
     anos = idade.days // 365 
     return anos
 
-
 def empty(id):
-    print(id)                      
     id = int(id)          
     professores = model_professor.existe_professor()
     for professor in professores:
-        print(professor)
         if professor['id'] == id:
             return False
     else:

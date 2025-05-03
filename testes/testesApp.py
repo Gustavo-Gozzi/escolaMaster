@@ -227,11 +227,18 @@ class TestStringMethods(unittest.TestCase):
 
     def test_012_DELETE_turmas(self):
         requests.post('http://localhost:8000/reseta/turmas')
-        requests.post('http://localhost:8000/turmas',json={
+        requests.post('http://localhost:8000/professores',json={
+            "nome": "Ireno",
+            "data_nascimento": "1999-11-21",
+            "disciplina": "Farm em Tibia",
+            "salario": 2200
+        })
+        r = requests.post('http://localhost:8000/turmas',json={
             "nome": "Farm",
             "turno": "Noturno",
-            "professor_id": 4
+            "professor_id": 1
         })
+        self.assertEqual(r.status_code, 200)
         requests.delete('http://localhost:8000/turmas/1')
         r_get = requests.get('http://localhost:8000/turmas')
         turmas = r_get.json()
@@ -241,6 +248,19 @@ class TestStringMethods(unittest.TestCase):
 
     def test_012_DELETE_alunos(self):
         requests.post('http://localhost:8000/reseta/alunos')
+        prof = requests.post('http://localhost:8000/professores',json={
+            "nome": "Ireno",
+            "data_nascimento": "1999-11-21",
+            "disciplina": "Farm em Tibia",
+            "salario": 2200
+        })
+        self.assertEqual(prof.status_code, 200)
+        turma = requests.post('http://localhost:8000/turmas',json={
+            "nome": "Farm",
+            "turno": "Noturno",
+            "professor_id": 1
+        })
+        self.assertEqual(turma.status_code, 200)
         requests.post('http://localhost:8000/alunos',json={
             "nome": "Luigi",
             "idade": 0,

@@ -11,32 +11,6 @@ class Aluno(db.Model):
     nota_segundo_semestre = db.Column(db.Numeric(10,2), nullable=False)
     turma_id = db.Column(db.Integer, db.ForeignKey('turma.id'), nullable=False)
 
-
-'''dicionario = {
-    "alunos": [          #lista de dicionarios
-        {
-            "id": 100,
-            "nome": "João",
-            "idade": 18,
-            "data_nascimento": "2005-03-20",
-            "nota_primeiro_semestre": "10",
-            "nota_segundo_semestre": "10",
-            "turma_id": "50"
-        },
-        {
-            "id": 101,
-            "nome": "Gustavo",
-            "idade": 18,
-            "data_nascimento": "2006-05-16",
-            "nota_primeiro_semestre": "5",
-            "nota_segundo_semestre": "5",
-            "turma_id": "50"
-        },
-    ],
-}'''
-
-
-############### ALUNOS ########################
 def lista_alunos():
     alunos = Aluno.query.all()
     lista = []
@@ -105,7 +79,7 @@ def post_alunos(dados):
 def put_Alunos(idAluno, resposta):
     aluno = Aluno.query.get(idAluno)
     chaves_necessarias = ["nome", "data_nascimento", "nota_primeiro_semestre", "nota_segundo_semestre", "turma_id"]
-    chaves_resposta = resposta.keys() #[nome, idade, data_nascimento, nota_1, nota2, turma_id]
+    chaves_resposta = resposta.keys() 
     faltantes = []
 
     for item in chaves_necessarias:
@@ -145,8 +119,6 @@ def resetaAlunos():
     db.session.commit()
     return "Todos os alunos foram apagados."
 
-#funcoes
-
 def existe_aluno():
     alunos = Aluno.query.all()
     lista = []
@@ -182,7 +154,6 @@ def media(nota1, nota2):
 
 
 def empty(id):
-    print(id)                      
     id = int(id)          
     turmas = model_turma.existe_turma()
     for turma in turmas:
