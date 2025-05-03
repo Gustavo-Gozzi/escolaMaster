@@ -381,7 +381,7 @@ class TestStringMethods(unittest.TestCase):
 
         self.assertEqual(r.status_code, 400)
 
-    def teste_016_POST_Turma_jsonIncompleto(self):
+    def test_016_POST_Turma_jsonIncompleto(self):
         r = requests.post('http://localhost:8000/turmas',json={
             "nome": "API",
             "turno": "Noturno",
