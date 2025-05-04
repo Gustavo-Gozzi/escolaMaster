@@ -1,6 +1,8 @@
 /venv
-aluno/__pycahce__/
-professor/__pycahce__/
-turma/__pycahce__/
-reseta/__pycache__
 __pycache__/
+aluno/__pycache__/
+professor/__pycache__/
+turma/__pycache__/
+reseta/__pycache__/
+*.py[cod]
+app.db
