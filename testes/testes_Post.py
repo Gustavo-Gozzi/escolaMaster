@@ -143,7 +143,7 @@ def POST_aluno_sem_turma(self):
         self.fail('aluno Mikael foi criado sem uma turma existente.')
 
 def POST_turma_sem_professor(self):
-    requests.post('http://localhost:8000/reseta/turma')
+    requests.post('http://localhost:8000/reseta/turmas')
     requests.post('http://localhost:8000/reseta/professores')
 
     requests.post('http://localhost:8000/professores',json={
