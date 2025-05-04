@@ -9,6 +9,7 @@ class Aluno(db.Model):
     data_nascimento = db.Column(db.String(10), nullable=False)
     nota_primeiro_semestre = db.Column(db.Numeric(10,2), nullable=False)
     nota_segundo_semestre = db.Column(db.Numeric(10,2), nullable=False)
+    media_final = db.Column(db.Numeric(10,2), nullable=False)
     turma_id = db.Column(db.Integer, db.ForeignKey('turma.id'), nullable=False)
 
 def lista_alunos():
@@ -22,6 +23,7 @@ def lista_alunos():
             "data_nascimento": aluno.data_nascimento,
             "nota_primeiro_semestre": aluno.nota_primeiro_semestre,
             "nota_segundo_semestre": aluno.nota_segundo_semestre,
+            "media_final": aluno.media_final,
             "turma_id": aluno.turma_id
         })
     
@@ -38,6 +40,7 @@ def aluno_by_id(id_aluno):
             "data_nascimento": aluno.data_nascimento,
             "nota_primeiro_semestre": aluno.nota_primeiro_semestre,
             "nota_segundo_semestre": aluno.nota_segundo_semestre,
+            "media_final": aluno.media_final,
             "turma_id": aluno.turma_id
         }
         return estudante
@@ -58,15 +61,31 @@ def post_alunos(dados):
     if not "data_nascimento" in dados:
         return {"msg":"Impossível registrar aluno sem Data de Nascimento.", "erro": 400}
 
-    dt_nascimento = dados["data_nascimento"]
-    idade = calcula_idade(dt_nascimento)
-    dados["idade"] = idade
-    nota1 = dados["nota_primeiro_semestre"]
-    nota2 = dados["nota_segundo_semestre"]
-    dados["media_final"] = media(nota1, nota2)
+    try: 
+        dt_nascimento = dados["data_nascimento"]
+        idade = calcula_idade(dt_nascimento)
+        if idade < 17: return {"msg":"Erro: Alunos devem ter ao menos 17 anos.", "erro": 400}
+        else: dados["idade"] = idade
+            
+    except:
+       return {"msg":"Erro com a Data de Nascimento. Formato esperado: yyyy-MM-dd", "erro": 400}
 
     try:
-        novo_aluno = Aluno(nome=dados["nome"], idade=dados["idade"], data_nascimento=dados["data_nascimento"], nota_primeiro_semestre=dados["nota_primeiro_semestre"], nota_segundo_semestre=dados["nota_segundo_semestre"], turma_id=dados["turma_id"])
+        nota1 = float(dados["nota_primeiro_semestre"])
+        nota2 = float(dados["nota_segundo_semestre"])
+        media_calculada = media(nota1, nota2)
+    except:
+        return {"msg":"Erro com as notas. Catractere inválido.", "erro": 400}
+
+    try:
+        novo_aluno = Aluno(nome=dados["nome"], 
+                           idade=dados["idade"], 
+                           data_nascimento=dados["data_nascimento"], 
+                           nota_primeiro_semestre=float(dados["nota_primeiro_semestre"]), 
+                           nota_segundo_semestre=float(dados["nota_segundo_semestre"]), 
+                           media_final=media_calculada,
+                           turma_id=dados["turma_id"])
+        
         db.session.add(novo_aluno)
         db.session.commit()
         return "Aluno adicionado com sucesso!"
@@ -88,12 +107,29 @@ def put_Alunos(idAluno, resposta):
     if len(faltantes) > 0:
         return {"msg": f"É necessário preencher todos os campos. Faltantes: {faltantes}", "erro": 400}
     
+    try: 
+        dt_nascimento = resposta["data_nascimento"]
+        idade = calcula_idade(dt_nascimento)
+        if idade < 17: return {"msg":"Erro: Alunos devem ter ao menos 17 anos.", "erro": 400}
+        else: resposta["idade"] = idade
+       
+    except:
+       return {"msg":"Erro com a Data de Nascimento. Formato esperado: yyyy-MM-dd", "erro": 400}
+
+    try:
+        nota1 = float(resposta["nota_primeiro_semestre"])
+        nota2 = float(resposta["nota_segundo_semestre"])
+        media_calculada = media(nota1, nota2)
+    except:
+        return {"msg":"Erro com as notas. Catractere inválido.", "erro": 400}
+    
     try:
         aluno.nome = resposta["nome"]
-        aluno.idade = calcula_idade(resposta["data_nascimento"])
+        aluno.idade = idade
         aluno.data_nascimento = resposta["data_nascimento"]
-        aluno.nota_primeiro_semestre = resposta["nota_primeiro_semestre"]
-        aluno.nota_segundo_semestre = resposta["nota_segundo_semestre"]
+        aluno.nota_primeiro_semestre = float(resposta["nota_primeiro_semestre"])
+        aluno.nota_segundo_semestre = float(resposta["nota_segundo_semestre"])
+        aluno.media_final = media_calculada
         aluno.turma_id = resposta["turma_id"]
         
         db.session.commit()

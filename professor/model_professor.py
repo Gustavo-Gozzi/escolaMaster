@@ -63,11 +63,22 @@ def post_professor(dados):
     if len(faltantes) > 0:
         return {"msg": f"É necessário preencher todos os campos. Faltantes: {faltantes}", "erro": 400}
 
-    nascimento = dados["data_nascimento"] 
-    age = calcula_idade(nascimento)     
+    try: 
+        dt_nascimento = dados["data_nascimento"]
+        age = calcula_idade(dt_nascimento)
+        if age < 18: return {"msg":"Erro: Professores devem ter ao menos 18 anos.", "erro": 400}
+        else: dados["idade"] = age
+       
+    except:
+       return {"msg":"Erro com a Data de Nascimento. Formato esperado: yyyy-MM-dd", "erro": 400}    
 
     try:
-        novo_professor = Professor(nome=dados["nome"], idade=age, data_nascimento=nascimento, disciplina=dados["disciplina"], salario=dados["salario"])
+        novo_professor = Professor(nome=dados["nome"], 
+                                   idade=age, 
+                                   data_nascimento=dt_nascimento, 
+                                   disciplina=dados["disciplina"], 
+                                   salario=dados["salario"])
+        
         db.session.add(novo_professor)
         db.session.commit()
         return "Professor adicionado com sucesso!"
@@ -88,6 +99,15 @@ def put_professor(idProfessor, resposta):
 
     if len(faltantes) > 0:
         return {"msg": f"É necessário preencher todos os campos. Faltantes: {faltantes}", "erro": 400}  
+    
+    try: 
+        dt_nascimento = resposta["data_nascimento"]
+        age = calcula_idade(dt_nascimento)
+        if age < 18: return {"msg":"Erro: Professores devem ter ao menos 18 anos.", "erro": 400}
+        else: resposta["idade"] = age
+       
+    except:
+       return {"msg":"Erro com a Data de Nascimento. Formato esperado: yyyy-MM-dd", "erro": 400}
 
     try:
         
@@ -95,7 +115,7 @@ def put_professor(idProfessor, resposta):
         professor.data_nascimento = resposta["data_nascimento"]
         professor.disciplina = resposta["disciplina"]
         professor.salario = resposta["salario"]
-        professor.idade = calcula_idade(resposta["data_nascimento"])
+        professor.idade = age
 
         db.session.commit()
         return "Alteração realizada com sucesso!"
