@@ -5,6 +5,3 @@ aluno/__pycache__/
 professor/__pycache__/
 turma/__pycache__/
 reseta/__pycache__/
-*.py[cod]
-
-app.db
