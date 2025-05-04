@@ -1,130 +1,174 @@
 from turma import model_turma
 import datetime
+from configuracao import db
 
+class Aluno(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(200), nullable=False)
+    idade = db.Column(db.Integer, nullable=False)
+    data_nascimento = db.Column(db.String(10), nullable=False)
+    nota_primeiro_semestre = db.Column(db.Numeric(10,2), nullable=False)
+    nota_segundo_semestre = db.Column(db.Numeric(10,2), nullable=False)
+    media_final = db.Column(db.Numeric(10,2), nullable=False)
+    turma_id = db.Column(db.Integer, db.ForeignKey('turma.id'), nullable=False)
 
-dicionario = {
-    "Alunos": [
-        {
-            "id": 100,
-            "nome": "Joao",
-            "idade": 0,
-            "data_nascimento": "2004-08-29",
-            "nota_primeiro_semestre": 0,
-            "nota_segundo_semestre": 0,
-            "turma_id": 0
-        }
-    ],
-}
-
-
-############### ALUNOS ########################
 def lista_alunos():
-    alunos = dicionario["Alunos"]
-    return alunos
+    alunos = Aluno.query.all()
+    lista = []
+    for aluno in alunos:
+        lista.append({
+            "id": aluno.id,
+            "nome": aluno.nome,
+            "idade": aluno.idade,
+            "data_nascimento": aluno.data_nascimento,
+            "nota_primeiro_semestre": aluno.nota_primeiro_semestre,
+            "nota_segundo_semestre": aluno.nota_segundo_semestre,
+            "media_final": aluno.media_final,
+            "turma_id": aluno.turma_id
+        })
+    
+    return lista
 
 
 def aluno_by_id(id_aluno):
-    alunos = dicionario["Alunos"]
-    for aluno in alunos:
-        if aluno["id"] == id_aluno:
-            return aluno
-    else:
-        return {"msg":"Aluno não encontrado!", "erro": 400}
+    aluno = Aluno.query.get(id_aluno)
+    try:
+        estudante = {
+            "id": aluno.id,
+            "nome": aluno.nome,
+            "idade": aluno.idade,
+            "data_nascimento": aluno.data_nascimento,
+            "nota_primeiro_semestre": aluno.nota_primeiro_semestre,
+            "nota_segundo_semestre": aluno.nota_segundo_semestre,
+            "media_final": aluno.media_final,
+            "turma_id": aluno.turma_id
+        }
+        return estudante
+    except:     
+        return {"msg": "Aluno não encontrado", "erro": 400}
 
 
 def post_alunos(dados):
-    turmas = model_turma.existe_turma()
-    if empty("Turma", turmas):
-        return "Não há turmas, impossível criar alunos."
-    
-    if not "nota_primeiro_semestre" in dados or not "nota_segundo_semestre" in dados:
-        return {"msg":"É necessário incluir as notas para adicionar um aluno.", "erro": 400}
-    
-    alunos = dicionario["Alunos"]
-
-    if not "data_nascimento" in dados:
-        return {"msg":"Impossível registrar aluno sem Data de Nascimento.", "erro": 400}
-    
-    if not "nota_primeiro_semestre" in dados or not "nota_segundo_semestre" in dados:
-        return {"msg":"É necessário incluir as notas para adicionar um aluno.", "erro": 400}
-    try:
-        turma_existe = False
-
-        for turma in turmas["Turma"]:
-            if turma["id"] == dados["turma_id"]:
-                turma_existe = True
-                break
-
-        if not turma_existe:
-            return {"msg":"Impossível criar aluno sem uma turma existente", "erro": 400}
-
-    except ValueError as e:
-        return "erro"
-
-    for aluno in alunos:
-        if aluno["id"] == dados["id"]:
-            return {"msg":"erro: id já utilizada", "erro": 400}
-
     if "nome" not in dados:
         return {"msg":"Aluno sem nome.", "erro": 400}
+    
+    if empty(dados["turma_id"]):
+        return {"msg":"Não há turmas, impossível criar alunos.", "erro": 400}
+    
+    if not "nota_primeiro_semestre" in dados or not "nota_segundo_semestre" in dados:
+        return {"msg":"É necessário incluir as notas para adicionar um aluno.", "erro": 400}
+    
+    if not "data_nascimento" in dados:
+        return {"msg":"Impossível registrar aluno sem Data de Nascimento.", "erro": 400}
 
-    dt_nascimento = dados["data_nascimento"]
-    idade = calcula_idade(dt_nascimento)
-    dados["idade"] = idade
-    nota1 = dados["nota_primeiro_semestre"]
-    nota2 = dados["nota_segundo_semestre"]
-    dados["media_final"] = media(nota1, nota2)
+    try: 
+        dt_nascimento = dados["data_nascimento"]
+        idade = calcula_idade(dt_nascimento)
+        if idade < 17: return {"msg":"Erro: Alunos devem ter ao menos 17 anos.", "erro": 400}
+        else: dados["idade"] = idade
+            
+    except:
+       return {"msg":"Erro com a Data de Nascimento. Formato esperado: yyyy-MM-dd", "erro": 400}
 
-    alunos.append(dados)
-    return "Aluno adicionado com sucesso"
+    try:
+        nota1 = float(dados["nota_primeiro_semestre"])
+        nota2 = float(dados["nota_segundo_semestre"])
+        media_calculada = media(nota1, nota2)
+    except:
+        return {"msg":"Erro com as notas. Catractere inválido.", "erro": 400}
+
+    try:
+        novo_aluno = Aluno(nome=dados["nome"], 
+                           idade=dados["idade"], 
+                           data_nascimento=dados["data_nascimento"], 
+                           nota_primeiro_semestre=float(dados["nota_primeiro_semestre"]), 
+                           nota_segundo_semestre=float(dados["nota_segundo_semestre"]), 
+                           media_final=media_calculada,
+                           turma_id=dados["turma_id"])
+        
+        db.session.add(novo_aluno)
+        db.session.commit()
+        return "Aluno adicionado com sucesso!"
+
+    except:
+        return {"msg":"Não foi possível aidicionar o Aluno", "erro": 500}
 
 
 def put_Alunos(idAluno, resposta):
-    alunos = dicionario["Alunos"]
-    for aluno in alunos:
-        if aluno['id'] == idAluno:
+    aluno = Aluno.query.get(idAluno)
+    chaves_necessarias = ["nome", "data_nascimento", "nota_primeiro_semestre", "nota_segundo_semestre", "turma_id"]
+    chaves_resposta = resposta.keys() 
+    faltantes = []
 
-            if "nome" not in resposta:
-                return {"msg":"Aluno sem nome.", "erro": 400}
+    for item in chaves_necessarias:
+        if item not in chaves_resposta:
+            faltantes.append(item)
 
-            if aluno['nome'] != resposta['nome']:
-                aluno['nome'] = resposta['nome']
+    if len(faltantes) > 0:
+        return {"msg": f"É necessário preencher todos os campos. Faltantes: {faltantes}", "erro": 400}
+    
+    try: 
+        dt_nascimento = resposta["data_nascimento"]
+        idade = calcula_idade(dt_nascimento)
+        if idade < 17: return {"msg":"Erro: Alunos devem ter ao menos 17 anos.", "erro": 400}
+        else: resposta["idade"] = idade
+       
+    except:
+       return {"msg":"Erro com a Data de Nascimento. Formato esperado: yyyy-MM-dd", "erro": 400}
 
-            if aluno['data_nascimento'] != resposta['data_nascimento']:
-                aluno['data_nascimento'] = resposta['data_nascimento']
-                dt_nascimento = resposta["data_nascimento"]
-                idade = calcula_idade(dt_nascimento)
-                aluno["idade"] = idade
-
-            if aluno['nota_primeiro_semestre'] != resposta["nota_primeiro_semestre"] or aluno[
-                'nota_segundo_semestre'] != resposta['nota_segundo_semestre']:
-                aluno["nota_primeiro_semestre"] = resposta["nota_primeiro_semestre"]
-                aluno["nota_segundo_semestre"] = resposta["nota_segundo_semestre"]
-                nota1 = resposta["nota_primeiro_semestre"]
-                nota2 = resposta["nota_segundo_semestre"]
-                aluno["media_final"] = media(nota1, nota2)
-
-            return "Alteração realizada com sucesso!"
+    try:
+        nota1 = float(resposta["nota_primeiro_semestre"])
+        nota2 = float(resposta["nota_segundo_semestre"])
+        media_calculada = media(nota1, nota2)
+    except:
+        return {"msg":"Erro com as notas. Catractere inválido.", "erro": 400}
+    
+    try:
+        aluno.nome = resposta["nome"]
+        aluno.idade = idade
+        aluno.data_nascimento = resposta["data_nascimento"]
+        aluno.nota_primeiro_semestre = float(resposta["nota_primeiro_semestre"])
+        aluno.nota_segundo_semestre = float(resposta["nota_segundo_semestre"])
+        aluno.media_final = media_calculada
+        aluno.turma_id = resposta["turma_id"]
+        
+        db.session.commit()
+        return "Alteração realizada com sucesso!"
+    
+    except:
+        return {"msg":"Erro", "erro":400}
 
 
 def delete_aluno(idAluno):
-    alunos = dicionario["Alunos"]
-    for aluno in alunos:
-        if aluno["id"] == idAluno:
-            alunos.remove(aluno)
-            return "Aluno deletado com sucesso"
-    else:
-        return {"msg":"Aluno não encontrado!", "erro": 400}
+    try:
+        aluno = Aluno.query.get(idAluno)     
+        db.session.delete(aluno)
+        db.session.commit()       
+        return "Aluno deletado com sucesso!"
+      
+    except:
+        return  {"msg":"Aluno não encontrado", "erro": 400}
 
 def resetaAlunos():
-    dados = dicionario["Alunos"]
-    dicionario["Alunos"].clear()
-    return dados
-
-#funcoes
+    db.session.query(Aluno).delete()
+    db.session.commit()
+    return "Todos os alunos foram apagados."
 
 def existe_aluno():
-    return dicionario
+    alunos = Aluno.query.all()
+    lista = []
+    for aluno in alunos:
+        objeto = {
+            "id": aluno.id,
+            "nome": aluno.nome,
+            "idade": aluno.idade,
+            "data_nascimento": aluno.data_nascimento,
+            "nota_primeiro_semestre": aluno.nota_primeiro_semestre,
+            "nota_segundo_semestre": aluno.nota_segundo_semestre,
+            "turma_id": aluno.turma_id
+        }
+        lista.append(objeto)
+    return lista
 
 
 def calcula_idade(data):
@@ -144,12 +188,11 @@ def media(nota1, nota2):
     return soma / 2
 
 
-def empty(texto, dicionario):
-    texto = texto.capitalize()
-    if texto in dicionario:
-        if len(dicionario[texto]) > 0:
+def empty(id):
+    id = int(id)          
+    turmas = model_turma.existe_turma()
+    for turma in turmas:
+        if turma['id'] == id:
             return False
-        else:
-            return True
     else:
-        return False
+        return True
