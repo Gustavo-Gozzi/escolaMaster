@@ -46,7 +46,6 @@ def aluno_by_id(id_aluno):
 
 
 def post_alunos(dados):
-
     if "nome" not in dados:
         return {"msg":"Aluno sem nome.", "erro": 400}
     
@@ -58,7 +57,7 @@ def post_alunos(dados):
     
     if not "data_nascimento" in dados:
         return {"msg":"Impossível registrar aluno sem Data de Nascimento.", "erro": 400}
-    
+
     dt_nascimento = dados["data_nascimento"]
     idade = calcula_idade(dt_nascimento)
     dados["idade"] = idade

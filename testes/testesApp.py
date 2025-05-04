@@ -1,431 +1,65 @@
 import requests
 import unittest
+import testes_Post, testes_Get, testes_Delete, testes_Put
 
 class TestStringMethods(unittest.TestCase):
     
     #Testando POST
     def test_001_POST_professores(self):
-        requests.post('http://localhost:8000/reseta')
-        r = requests.post('http://localhost:8000/professores',json={
-            "nome": "Gandalf",
-            "data_nascimento": "1295-05-16",
-            "disciplina": "Magia",
-            "salario": 15000
-        })
-        r = requests.post('http://localhost:8000/professores',json={
-            "nome": "Frodo",
-            "data_nascimento": "1542-10-23",
-            "disciplina": "Jornada",
-            "salario": 4000
-        })
-        
-        r_lista = requests.get('http://localhost:8000/professores')
-        professores = r_lista.json()
-
-        gandalf = False
-        frodo = False
-        for professor in professores:
-            if professor['nome'] == 'Gandalf':
-                    gandalf = True
-            if professor['nome'] == 'Frodo':
-                    frodo = True
-            
-        if not gandalf:
-            self.fail('professor Gandalf nao encontrado.')
-        if not frodo:
-            self.fail('professor Frodo nao encontrado.')
-
+        testes_Post.POST_professores(self)
 
     def test_002_POST_turmas(self):
-        r = requests.post('http://localhost:8000/turmas',json={
-            "nome": "Magia",
-            "turno": "Noturno",
-            "professor_id": 1
-        })
-        r = requests.post('http://localhost:8000/turmas',json={
-            "nome": "Jornada",
-            "turno": "Noturno",
-            "professor_id": 2
-        })
-        
-        r_lista = requests.get('http://localhost:8000/turmas')
-        turmas = r_lista.json()
-
-        magia = False
-        jornada = False
-        for turma in turmas:
-            if turma['nome'] == 'Jornada':
-                jornada = True
-            if turma['nome'] == 'Magia':
-                magia = True
-        
-        if not jornada:
-            self.fail('materia Jornada nao encontrada.')
-        if not magia:
-            self.fail('materia Magia nao encontrada.')
+        testes_Post.POST_turmas(self)
 
     def test_003_POST_alunos(self):
-        r = requests.post('http://localhost:8000/alunos',json={
-            "nome": "Joao",
-            "data_nascimento": "2004-08-29",
-            "nota_primeiro_semestre": 8,
-            "nota_segundo_semestre": 9,
-            "turma_id": 1
-        })
-        r = requests.post('http://localhost:8000/alunos',json={
-            "nome": "Mikael",
-            "data_nascimento": "2002-04-12",
-            "nota_primeiro_semestre": 7,
-            "nota_segundo_semestre": 10,
-            "turma_id": 2
-        })
-        
-        r_lista = requests.get('http://localhost:8000/alunos')
-        alunos = r_lista.json()
+        testes_Post.POST_alunos(self)
 
-        joao = False
-        mikael = False
-        for aluno in alunos:
-            if aluno['nome'] == 'Joao':
-                joao = True
-            if aluno['nome'] == 'Mikael':
-                mikael = True
-        
-        if not joao:
-            self.fail('aluno Joao nao encontrado.')
-        if not mikael:
-            self.fail('aluno Mikael nao encontrado.')
-
+    #Testando GET
     def test_004_GET_alunos(self):
-        r_lista = requests.get('http://localhost:8000/alunos')
-        alunos = r_lista.json()
-
-        joao = False
-        mikael = False
-        for aluno in alunos:
-            if aluno['nome'] == 'Joao':
-                joao = True
-            if aluno['nome'] == 'Mikael':
-                mikael = True
-        
-        if not joao:
-            self.fail('aluno Joao nao encontrado.')
-        if not mikael:
-            self.fail('aluno Mikael nao encontrado.')
+        testes_Get.GET_alunos(self)
 
     def test_005_GET_professores(self):
-        r_lista = requests.get('http://localhost:8000/professores')
-        professores = r_lista.json()
-
-        gandalf = False
-        frodo = False
-        for professor in professores:
-            if professor['nome'] == 'Gandalf':
-                gandalf = True
-            if professor['nome'] == 'Frodo':
-                frodo = True
-        
-        if not gandalf:
-            self.fail('professor Gandalf nao encontrado.')
-        if not frodo:
-            self.fail('professor Frodo nao encontrado.')
+        testes_Get.GET_professores(self)
 
     def test_006_GET_turmas(self):
-        r_lista = requests.get('http://localhost:8000/turmas')
-        turmas = r_lista.json()
+        testes_Get.GET_turmas(self)
 
-        magia = False
-        jornada = False
-        for turma in turmas:
-            if turma['nome'] == 'Jornada':
-                jornada = True
-            if turma['nome'] == 'Magia':
-                magia = True
-        
-        if not jornada:
-            self.fail('materia Jornada nao encontrada.')
-        if not magia:
-            self.fail('materia Magia nao encontrada.')
-
-
-    #Testando GETs by ID
+    #Testando GET by ID
     def test_007_GETbyID_professores(self):
-        requests.post('http://localhost:8000/reseta/professores')
-
-        r = requests.post('http://localhost:8000/professores',json={
-            "nome": "Gandalf",
-            "idade": 0,
-            "data_nascimento": "1200-01-01",
-            "disciplina": "Ressucitação",
-            "salario": 15000
-        })
-
-        resposta = requests.get('http://localhost:8000/professores/1')
-        dict_retornado = resposta.json()
-
-        self.assertEqual(type(dict_retornado), dict)
-
-        self.assertIn('nome',dict_retornado)
-
-        self.assertEqual(dict_retornado['nome'],'Gandalf')
+        testes_Get.GETbyID_professores(self)
 
     def test_008_GETbyID_turmas(self):
-        requests.post('http://localhost:8000/reseta/turmas')
-
-
-        r = requests.post('http://localhost:8000/turmas',json={
-            "nome": "Ressucitação",
-            "turno": "Noturno",
-            "professor_id": 1
-        })
-
-        resposta = requests.get('http://localhost:8000/turmas/1')
-        dict_retornado = resposta.json()
-
-        self.assertEqual(type(dict_retornado), dict)
-
-        self.assertIn('nome',dict_retornado)
-
-        self.assertEqual(dict_retornado['nome'],'Ressucitação')     
+        testes_Get.GETbyID_turmas(self)
 
     def test_009_GETbyID_alunos(self):
-        requests.post('http://localhost:8000/reseta/alunos')
-
-        r = requests.post('http://localhost:8000/alunos',json={
-            "nome": "Daniel",
-            "data_nascimento": "1995-03-27",
-            "nota_primeiro_semestre": 5,
-            "nota_segundo_semestre": 5,
-            "turma_id": 1
-        })
-
-        resposta = requests.get('http://localhost:8000/alunos/1')
-        dict_retornado = resposta.json()
-
-        self.assertEqual(type(dict_retornado), dict)
-
-        self.assertIn('nome',dict_retornado)
-
-        self.assertEqual(dict_retornado['nome'],'Daniel') 
+        testes_Get.GETbyID_alunos(self)
 
     #Testando DELETE
     def test_010_DELETE_professores(self):
-        requests.post('http://localhost:8000/reseta/professores')
-        
-        requests.post('http://localhost:8000/professores',json={
-            "nome": "Ireno",
-            "data_nascimento": "1999-11-21",
-            "disciplina": "Farm em Tibia",
-            "salario": 2200
-        })
-        requests.delete('http://localhost:8000/professores/1')
-        r_get = requests.get('http://localhost:8000/professores')
-        professores = r_get.json()
-        for professor in professores:
-            if professor["nome"] == "Ireno":
-                self.fail(f"O professor {professor['nome']} não foi deletado.")
+        testes_Delete.DELETE_professor(self)
 
-    def test_012_DELETE_turmas(self):
-        requests.post('http://localhost:8000/reseta/turmas')
-        requests.post('http://localhost:8000/professores',json={
-            "nome": "Ireno",
-            "data_nascimento": "1999-11-21",
-            "disciplina": "Farm em Tibia",
-            "salario": 2200
-        })
-        r = requests.post('http://localhost:8000/turmas',json={
-            "nome": "Farm",
-            "turno": "Noturno",
-            "professor_id": 1
-        })
-        self.assertEqual(r.status_code, 200)
-        requests.delete('http://localhost:8000/turmas/1')
-        r_get = requests.get('http://localhost:8000/turmas')
-        turmas = r_get.json()
-        for turma in turmas:
-            if turma["nome"] == "Farm":
-                self.fail(f"A turma {turma['nome']} não foi deletada.")            
+    def test_011_DELETE_turmas(self):
+        testes_Delete.DELETE_turmas(self)            
 
     def test_012_DELETE_alunos(self):
-        requests.post('http://localhost:8000/reseta/alunos')
-        prof = requests.post('http://localhost:8000/professores',json={
-            "nome": "Ireno",
-            "data_nascimento": "1999-11-21",
-            "disciplina": "Farm em Tibia",
-            "salario": 2200
-        })
-        self.assertEqual(prof.status_code, 200)
-        turma = requests.post('http://localhost:8000/turmas',json={
-            "nome": "Farm",
-            "turno": "Noturno",
-            "professor_id": 1
-        })
-        self.assertEqual(turma.status_code, 200)
-        requests.post('http://localhost:8000/alunos',json={
-            "nome": "Luigi",
-            "idade": 0,
-            "data_nascimento": "1991-10-11",
-            "nota_primeiro_semestre": 5,
-            "nota_segundo_semestre": 5,
-            "turma_id": 1
-        })
-        requests.delete('http://localhost:8000/alunos/1')
-        r_get = requests.get('http://localhost:8000/alunos')
-        alunos = r_get.json()
-        for aluno in alunos:
-            if aluno["nome"] == "Luigi":
-                self.fail(f"O aluno {aluno['nome']} não foi deletado.")
-   
+        testes_Delete.DELETE_alunos(self)
 
     def test_013_POST_Aluno_SemTurma(self):
-        requests.post('http://localhost:8000/reseta')
-        requests.post('http://localhost:8000/professores',json={
-            "nome": "Ireno",
-            "data_nascimento": "1999-11-21",
-            "disciplina": "Farm em Tibia",
-            "salario": 2200
-        })
-        requests.post('http://localhost:8000/turmas',json={
-            "nome": "Farm",
-            "turno": "Noturno",
-            "professor_id": 1
-        })
-        
-
-        r = requests.post('http://localhost:8000/alunos',json={
-            "nome": "Joao",
-            "data_nascimento": "2004-08-29",
-            "nota_primeiro_semestre": 8,
-            "nota_segundo_semestre": 9,
-            "turma_id": 1
-        })
-        self.assertEqual(r.status_code,200)
-
-        r = requests.post('http://localhost:8000/alunos',json={
-            "nome": "Mikael",
-            "data_nascimento": "2002-04-12",
-            "nota_primeiro_semestre": 7,
-            "nota_segundo_semestre": 10,
-            "turma_id": 1000
-        })
-        self.assertEqual(r.status_code,400)
-
-        r_lista = requests.get('http://localhost:8000/alunos')
-        alunos = r_lista.json()
-
-        joao = False
-        mikael = False
-        for aluno in alunos:
-            if aluno['nome'] == 'Joao':
-                joao = True
-            if aluno['nome'] == 'Mikael':
-                mikael = True
-        
-        if not joao:
-            self.fail('aluno Joao nao encontrado.')
-        if mikael:
-            self.fail('aluno Mikael foi criado sem uma turma existente.')
+        testes_Post.POST_aluno_sem_turma(self)
 
     def test_014_POST_Turma_SemProfessor(self):
-        requests.post('http://localhost:8000/professores',json={
-            "id": 4,
-            "nome": "Ireno",
-            "idade": 0,
-            "data_nascimento": "1999-11-21",
-            "disciplina": "Farm em Tibia",
-            "salario": 2200
-        })
-        r_reset = requests.post('http://localhost:8000/reseta/turmas')
+        testes_Post.POST_turma_sem_professor(self)    
 
-        r = requests.post('http://localhost:8000/turmas',json={
-            "id": 1,
-            "nome": "API",
-            "turno": "Noturno",
-            "professor_id": 1
-        })
-        
-        self.assertEqual(r.status_code,200)
+    def test_015_PUT_professores(self):
+        testes_Put.PUT_professores(self)
 
-        r = requests.post('http://localhost:8000/turmas',json={
-            "id": 2,
-            "nome": "Mobile",
-            "turno": "Noturno",
-            "professor_id": 1987
-        })
-        
-        self.assertEqual(r.status_code,400)
+    def test_016_PUT_turma(self):
+        testes_Put.PUT_turmas(self)
 
-        r_lista = requests.get('http://localhost:8000/turmas')
-        turmas = r_lista.json()
-
-        api = False
-        mobile = False
-        for turma in turmas:
-            if turma['nome'] == 'API':
-                api = True
-            if turma['nome'] == 'Mobile':
-                mobile = True
-        
-        if not api:
-            self.fail('materia API nao encontrada.')
-        if mobile:
-            self.fail('materia Mobile foi criada sem vinculo com professores.')
-
-        requests.delete('http://localhost:8000/professores/4')
-  
-    def test_015_POST_Professor_jsonIncompleto(self):
-        requests.post('http://localhost:8000/reseta')
-        r = requests.post('http://localhost:8000/professores',json={
-            "nome": "Ireno",
-            "idade": 0,
-            "data_nascimento": "1999-11-21",
-            "disciplina": "Farm em Tibia",
-            "salario": 2200
-        })
-        self.assertEqual(r.status_code, 200)
-
-        r = requests.post('http://localhost:8000/professores',json={
-            "idade": 0,
-            "data_nascimento": "1999-11-21",
-            "disciplina": "Farm em Tibia",
-            "salario": 2200
-        })
-        self.assertEqual(r.status_code, 400)
-
-        r = requests.post('http://localhost:8000/professores',json={
-            "nome": "Ireno",
-            "idade": 0,
-            "data_nascimento": "1999-11-21",
-            "disciplina": "Farm em Tibia",
-        })
-
-        self.assertEqual(r.status_code, 400)
-
-    def test_016_POST_Turma_jsonIncompleto(self):
-        r = requests.post('http://localhost:8000/turmas',json={
-            "nome": "API",
-            "turno": "Noturno",
-            "professor_id": 1
-        })
-
-        self.assertEqual(r.status_code, 200)
-
-        r = requests.post('http://localhost:8000/turmas',json={
-            "nome": "API",
-            "professor_id": 1
-        })
-
-        self.assertEqual(r.status_code, 400)
-
-        r = requests.post('http://localhost:8000/turmas',json={
-            "turno": "Noturno",
-            "professor_id": 1
-        })
-
-        self.assertEqual(r.status_code, 400)
-
-
-
+    def test_017_PUT_alunos(self):
+        testes_Put.PUT_alunos(self)
+    
+    
 
 def runTests():
         suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestStringMethods)
