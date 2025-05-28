@@ -1,0 +1,592 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "API Escola Master",
+    "description": "API RESTful que disponibiliza funcionalidades para fazer a gestão de um sistema escolar.\n\n🔗 [Documentação Swagger](https://api.escolamaster.com.br/docs)\n📁 [GitHub - EscolaMaster](https://github.com/Gustavo-Gozzi/escolaMaster)",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://localhost:8000/",
+      "description": "Servidor de Produção"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Turmas",
+      "description": "Gerenciamento de dados das turmas"
+    },
+    {
+      "name": "Professores",
+      "description": "Gerenciamento de dados dos professores"
+    },
+    {
+      "name": "Alunos",
+      "description": "Gerenciamento de dados dos alunos"
+    }
+  ],
+  "paths": {
+    "/turmas": {
+      "get": {
+        "tags": [
+          "Turmas"
+        ],
+        "summary": "Lista todas as turmas existentes",
+        "description": "Retorna todas as turmas cadastradas no sistema.",
+        "responses": {
+          "200": {
+            "description": "Lista de turmas retornada com sucesso!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Turma"
+                  },
+                  "example": [
+                    {
+                      "id": 100,
+                      "nome": "DevOps",
+                      "professor_id": 101,
+                      "turno": "Diurno"
+                    },
+                    {
+                      "id": 201,
+                      "nome": "APIS",
+                      "professor_id": 102,
+                      "turno": "Noturno"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Turmas"
+        ],
+        "summary": "Cadastrar nova turma",
+        "description": "Cadastra uma nova turma.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NovaTurma"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Turma criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Turma"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida (dados incorretos)"
+          }
+        }
+      }
+    },
+    "/turmas/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "description": "ID da turma"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Turmas"
+        ],
+        "summary": "Buscar turma por ID",
+        "responses": {
+          "200": {
+            "description": "Turma encontrada com sucesso!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Turma"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Turma não encontrada"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Turmas"
+        ],
+        "summary": "Atualizar dados das turmas existentes",
+        "description": "Atualiza uma turma solicitada pelo id.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NovaTurma"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Turma atualizada com sucesso"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "Turma não encontrada"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Turmas"
+        ],
+        "summary": "Excluir Turma",
+        "description": "Excluí uma turma pelo id.",
+        "responses": {
+          "204": {
+            "description": "Turma removida com sucesso"
+          },
+          "404": {
+            "description": "Turma não encontrada"
+          }
+        }
+      }
+    },
+    "/professores": {
+      "get": {
+        "tags": [
+          "Professores"
+        ],
+        "summary": "Lista todos os professores",
+        "description": "Retorna todos os professores cadastrados.",
+        "responses": {
+          "200": {
+            "description": "Lista de professores retornada com sucesso!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Professor"
+                  },
+                  "example": [
+                    {
+                      "id": 100,
+                      "nome": "Caio",
+                      "idade": 0,
+                      "data_nascimento": "2000-03-16",
+                      "disciplina": "API",
+                      "salario": 5000
+                    },
+                    {
+                      "id": 101,
+                      "nome": "Odair",
+                      "idade": 100,
+                      "data_nascimento": "1925-03-16",
+                      "disciplina": "Mobile",
+                      "salario": 5000
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Professores"
+        ],
+        "summary": "Cadastrar novo professor",
+        "description": "Cadastra um novo professor.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Professor"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Professor criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Professor"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida (dados incorretos)"
+          }
+        }
+      }
+    },
+    "/alunos": {
+      "get": {
+        "tags": [
+          "Alunos"
+        ],
+        "summary": "Lista todos os alunos",
+        "description": "Retorna todos os alunos cadastrados.",
+        "responses": {
+          "200": {
+            "description": "Lista de alunos retornada com sucesso!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Aluno"
+                  },
+                  "example": [
+                    {
+                      "id": 100,
+                      "nome": "João",
+                      "idade": 18,
+                      "data_nascimento": "2005-03-20",
+                      "nota_primeiro_semestre": "10",
+                      "nota_segundo_semestre": "10",
+                      "turma_id": "50"
+                    },
+                    {
+                      "id": 101,
+                      "nome": "Gustavo",
+                      "idade": 18,
+                      "data_nascimento": "2005-05-16",
+                      "nota_primeiro_semestre": "9.9",
+                      "nota_segundo_semestre": "9.9",
+                      "turma_id": "50"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Alunos"
+        ],
+        "summary": "Cadastrar novo aluno",
+        "description": "Cadastra um novo aluno.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Aluno"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Aluno criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Aluno"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida (dados incorretos)"
+          }
+        }
+      }
+    },
+    "/alunos/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "description": "ID do aluno"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Alunos"
+        ],
+        "summary": "Buscar aluno por ID",
+        "description": "Retorna um aluno por ID.",
+        "responses": {
+          "200": {
+            "description": "Aluno encontrado com sucesso!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Aluno"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Aluno não encontrado"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Alunos"
+        ],
+        "summary": "Atualizar dados do aluno",
+        "description": "Atualiza os dados de um aluno existente, identificado pelo ID.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Aluno"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Aluno atualizado com sucesso"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "Aluno não encontrado"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Alunos"
+        ],
+        "summary": "Excluir aluno",
+        "description": "Exclui um aluno pelo ID.",
+        "responses": {
+          "204": {
+            "description": "Aluno removido com sucesso"
+          },
+          "404": {
+            "description": "Aluno não encontrado"
+          }
+        }
+      }
+    },
+    "/professores/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "description": "ID do professor"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Professores"
+        ],
+        "summary": "Buscar professor por ID",
+        "description": "Retorna um professor por ID.",
+        "responses": {
+          "200": {
+            "description": "Professor encontrado com sucesso!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Professor"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Professor não encontrado"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Professores"
+        ],
+        "summary": "Atualizar dados do professor",
+        "description": "Atualiza os dados de um professor existente, identificado pelo ID.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Professor"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Professor atualizado com sucesso"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "Professor não encontrado"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Professores"
+        ],
+        "summary": "Excluir professor",
+        "description": "Exclui um professor pelo ID.",
+        "responses": {
+          "204": {
+            "description": "Professor removido com sucesso"
+          },
+          "404": {
+            "description": "Professor não encontrado"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Turma": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 100
+          },
+          "nome": {
+            "type": "string",
+            "example": "DevOps"
+          },
+          "professor_id": {
+            "type": "integer",
+            "example": 101
+          },
+          "turno": {
+            "type": "string",
+            "example": "Diurno"
+          }
+        }
+      },
+      "NovaTurma": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "example": "DevOps"
+          },
+          "professor_id": {
+            "type": "integer",
+            "example": 101
+          },
+          "turno": {
+            "type": "string",
+            "example": "Diurno"
+          }
+        }
+      },
+      "Aluno": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 100
+          },
+          "nome": {
+            "type": "string",
+            "example": "João"
+          },
+          "idade": {
+            "type": "integer",
+            "example": 18
+          },
+          "data_nascimento": {
+            "type": "string",
+            "format": "date",
+            "example": "2005-03-20"
+          },
+          "nota_primeiro_semestre": {
+            "type": "string",
+            "example": "10"
+          },
+          "nota_segundo_semestre": {
+            "type": "string",
+            "example": "10"
+          },
+          "turma_id": {
+            "type": "integer",
+            "example": 50
+          }
+        }
+      },
+      "Professor": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 100
+          },
+          "nome": {
+            "type": "string",
+            "example": "Caio"
+          },
+          "idade": {
+            "type": "integer",
+            "example": 40
+          },
+          "data_nascimento": {
+            "type": "string",
+            "format": "date",
+            "example": "1985-07-15"
+          },
+          "disciplina": {
+            "type": "string",
+            "example": "Matemática"
+          },
+          "salario": {
+            "type": "integer",
+            "example": 5000
+          }
+        }
+      }
+    }
+  }
+}
